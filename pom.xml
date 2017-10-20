@@ -26,8 +26,8 @@
 
     <scm>
         <connection>scm:git:https://gitbox.apache.org/repos/asf/sling-org-apache-sling-models-jacksonexporter.git</conncetion>
-        <developerConnection> scm:svn:https://svn.apache.org/repos/asf/sling/trunk/bundles/extensions/models/jackson-exporter</developerConnection>
-        <url>https://gitbox.apache.org/repos/asf?p=sling-org-apache-sling-models-jacksonexporter.git.git</url>
+        <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/sling-org-apache-sling-models-jacksonexporter.git</developerConnection>
+        <url>https://gitbox.apache.org/repos/asf?p=sling-org-apache-sling-models-jacksonexporter.git</url>
     </scm>
     <build>
         <plugins>
