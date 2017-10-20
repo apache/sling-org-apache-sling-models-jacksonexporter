@@ -25,9 +25,9 @@
     <description>Apache Sling Models Client Model Exporter - Jackson</description>
 
     <scm>
-        <connection>scm:svn:http://svn.apache.org/repos/asf/sling/trunk/bundles/extensions/models/jackson-exporter</connection>
+        <connection>scm:git:https://gitbox.apache.org/repos/asf/sling-org-apache-sling-models-jacksonexporter.git</conncetion>
         <developerConnection> scm:svn:https://svn.apache.org/repos/asf/sling/trunk/bundles/extensions/models/jackson-exporter</developerConnection>
-        <url>http://svn.apache.org/viewvc/sling/trunk/bundles/extensions/models/jackson-exporter</url>
+        <url>https://gitbox.apache.org/repos/asf?p=sling-org-apache-sling-models-jacksonexporter.git.git</url>
     </scm>
     <build>
         <plugins>
