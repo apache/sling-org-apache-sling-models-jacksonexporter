@@ -32,6 +32,7 @@ import org.apache.sling.commons.osgi.Order;
 import org.apache.sling.commons.osgi.RankedServices;
 import org.apache.sling.models.export.spi.ModelExporter;
 import org.apache.sling.models.factory.ExportException;
+import org.jetbrains.annotations.NotNull;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -42,8 +43,6 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.sling.models.jacksonexporter.ModuleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.annotation.Nonnull;
 
 @Component
 @Service
@@ -64,12 +63,12 @@ public class JacksonExporter implements ModelExporter {
     private final RankedServices<ModuleProvider> moduleProviders = new RankedServices<ModuleProvider>(Order.ASCENDING);
 
     @Override
-    public boolean isSupported(@Nonnull Class<?> clazz) {
+    public boolean isSupported(@NotNull Class<?> clazz) {
         return clazz.equals(String.class) || clazz.equals(Map.class);
     }
 
     @Override
-    public <T> T export(@Nonnull Object model, @Nonnull Class<T> clazz, @Nonnull Map<String, String> options)
+    public <T> T export(@NotNull Object model, @NotNull Class<T> clazz, @NotNull Map<String, String> options)
             throws ExportException {
         ObjectMapper mapper = new ObjectMapper();
         for (Map.Entry<String, String> optionEntry : options.entrySet()) {
@@ -134,7 +133,7 @@ public class JacksonExporter implements ModelExporter {
     }
 
     @Override
-    public @Nonnull String getName() {
+    public @NotNull String getName() {
         return "jackson";
     }
 
