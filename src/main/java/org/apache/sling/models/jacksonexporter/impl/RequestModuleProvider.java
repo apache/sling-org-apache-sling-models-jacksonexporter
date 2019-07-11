@@ -16,25 +16,20 @@
  */
 package org.apache.sling.models.jacksonexporter.impl;
 
-import com.fasterxml.jackson.databind.Module;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.databind.module.SimpleSerializers;
-import org.apache.felix.scr.annotations.Activate;
-import org.apache.felix.scr.annotations.Component;
-import org.apache.felix.scr.annotations.Property;
-import org.apache.felix.scr.annotations.Service;
-import org.apache.sling.api.SlingHttpServletRequest;
-import org.apache.sling.api.resource.Resource;
-import org.apache.sling.models.jacksonexporter.ModuleProvider;
-import org.osgi.framework.Constants;
+import java.util.Enumeration;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Enumeration;
 
-@Component
-@Service
-@Property(name = Constants.SERVICE_RANKING, intValue = 0)
+import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.models.jacksonexporter.ModuleProvider;
+import org.osgi.framework.Constants;
+import org.osgi.service.component.annotations.Component;
+
+import com.fasterxml.jackson.databind.Module;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+
+@Component(property=Constants.SERVICE_RANKING+":Integer=0", service=ModuleProvider.class)
 public class RequestModuleProvider implements ModuleProvider {
 
     private final SimpleModule moduleInstance;

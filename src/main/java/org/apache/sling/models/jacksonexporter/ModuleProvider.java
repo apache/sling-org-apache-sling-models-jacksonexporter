@@ -16,7 +16,8 @@
  */
 package org.apache.sling.models.jacksonexporter;
 
-import aQute.bnd.annotation.ConsumerType;
+import org.osgi.annotation.versioning.ConsumerType;
+
 import com.fasterxml.jackson.databind.Module;
 
 /**
