@@ -136,20 +136,20 @@ public class JacksonExporter implements ModelExporter {
     private ObjectMapper getDefaultMapper() {
         ObjectMapper mapper = new ObjectMapper();
 
-        for (String optionKey : mappingOptions.keySet()) {
-            if (optionKey.startsWith(SERIALIZATION_FEATURE_PREFIX)) {
-                String enumName = optionKey.substring(SERIALIZATION_FEATURE_PREFIX_LENGTH);
+        for (Map.Entry<String, String> option: mappingOptions.entrySet()) {
+            if (option.getKey().startsWith(SERIALIZATION_FEATURE_PREFIX)) {
+                String enumName = option.getKey().substring(SERIALIZATION_FEATURE_PREFIX_LENGTH);
                 try {
                     SerializationFeature feature = SerializationFeature.valueOf(enumName);
-                    mapper.configure(feature, Boolean.parseBoolean(mappingOptions.get(optionKey)));
+                    mapper.configure(feature, Boolean.parseBoolean(option.getValue()));
                 } catch (IllegalArgumentException e) {
                     log.warn("Bad SerializationFeature option");
                 }
-            } else if (optionKey.startsWith(MAPPER_FEATURE_PREFIX)) {
-                String enumName = optionKey.substring(MAPPER_FEATURE_PREFIX_LENGTH);
+            } else if (option.getKey().startsWith(MAPPER_FEATURE_PREFIX)) {
+                String enumName = option.getKey().substring(MAPPER_FEATURE_PREFIX_LENGTH);
                 try {
                     MapperFeature feature = MapperFeature.valueOf(enumName);
-                    mapper.configure(feature, Boolean.parseBoolean(mappingOptions.get(optionKey)));
+                    mapper.configure(feature, Boolean.parseBoolean(option.getValue()));
                 } catch (IllegalArgumentException e) {
                     log.warn("Bad MapperFeature option");
                 }
