@@ -18,33 +18,29 @@
  */
 package org.apache.sling.models.jacksonexporter.impl;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.util.Map;
-
-import com.fasterxml.jackson.databind.MapperFeature;
-import org.apache.felix.scr.annotations.Component;
-import org.apache.felix.scr.annotations.Reference;
-import org.apache.felix.scr.annotations.ReferenceCardinality;
-import org.apache.felix.scr.annotations.ReferencePolicy;
-import org.apache.felix.scr.annotations.Service;
-import org.apache.sling.commons.osgi.Order;
-import org.apache.sling.commons.osgi.RankedServices;
-import org.apache.sling.models.export.spi.ModelExporter;
-import org.apache.sling.models.factory.ExportException;
-import org.jetbrains.annotations.NotNull;
-
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.SerializableString;
 import com.fasterxml.jackson.core.io.CharacterEscapes;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import org.apache.felix.scr.annotations.*;
+import org.apache.sling.commons.osgi.Order;
+import org.apache.sling.commons.osgi.PropertiesUtil;
+import org.apache.sling.commons.osgi.RankedServices;
+import org.apache.sling.models.export.spi.ModelExporter;
+import org.apache.sling.models.factory.ExportException;
 import org.apache.sling.models.jacksonexporter.ModuleProvider;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Component
+import java.io.IOException;
+import java.io.StringWriter;
+import java.util.Map;
+
+@Component(metatype = true)
 @Service
 public class JacksonExporter implements ModelExporter {
 
@@ -58,9 +54,14 @@ public class JacksonExporter implements ModelExporter {
 
     private static final int MAPPER_FEATURE_PREFIX_LENGTH = MAPPER_FEATURE_PREFIX.length();
 
+    @Property(value = {}, cardinality = Integer.MAX_VALUE, label = "Mapping options", description = "Mapping options to override default Jackson settings, E.g.: 'MapperFeature.SORT_PROPERTIES_ALPHABETICALLY=true'")
+    public static final String MAPPING_OPTIONS = "mapping.options";
+
     @Reference(name = "moduleProvider", referenceInterface = ModuleProvider.class,
             cardinality = ReferenceCardinality.OPTIONAL_MULTIPLE, policy = ReferencePolicy.DYNAMIC)
     private final RankedServices<ModuleProvider> moduleProviders = new RankedServices<ModuleProvider>(Order.ASCENDING);
+
+    private Map<String, String> mappingOptions;
 
     @Override
     public boolean isSupported(@NotNull Class<?> clazz) {
@@ -70,7 +71,7 @@ public class JacksonExporter implements ModelExporter {
     @Override
     public <T> T export(@NotNull Object model, @NotNull Class<T> clazz, @NotNull Map<String, String> options)
             throws ExportException {
-        ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper mapper = getDefaultMapper();
         for (Map.Entry<String, String> optionEntry : options.entrySet()) {
             String key = optionEntry.getKey();
             if (key.startsWith(SERIALIZATION_FEATURE_PREFIX)) {
@@ -130,6 +131,37 @@ public class JacksonExporter implements ModelExporter {
 
     protected void unbindModuleProvider(final ModuleProvider moduleProvider, final Map<String, Object> props) {
         moduleProviders.unbind(moduleProvider, props);
+    }
+
+    private ObjectMapper getDefaultMapper() {
+        ObjectMapper mapper = new ObjectMapper();
+
+        for (String optionKey : mappingOptions.keySet()) {
+            if (optionKey.startsWith(SERIALIZATION_FEATURE_PREFIX)) {
+                String enumName = optionKey.substring(SERIALIZATION_FEATURE_PREFIX_LENGTH);
+                try {
+                    SerializationFeature feature = SerializationFeature.valueOf(enumName);
+                    mapper.configure(feature, Boolean.parseBoolean(mappingOptions.get(optionKey)));
+                } catch (IllegalArgumentException e) {
+                    log.warn("Bad SerializationFeature option");
+                }
+            } else if (optionKey.startsWith(MAPPER_FEATURE_PREFIX)) {
+                String enumName = optionKey.substring(MAPPER_FEATURE_PREFIX_LENGTH);
+                try {
+                    MapperFeature feature = MapperFeature.valueOf(enumName);
+                    mapper.configure(feature, Boolean.parseBoolean(mappingOptions.get(optionKey)));
+                } catch (IllegalArgumentException e) {
+                    log.warn("Bad SerializationFeature option");
+                }
+            }
+        }
+        return mapper;
+    }
+
+    @Modified
+    @Activate
+    public void activate(Map<String, Object> properties) {
+        this.mappingOptions = PropertiesUtil.toMap(properties.get(MAPPING_OPTIONS), new String[0]);
     }
 
     @Override
