@@ -88,7 +88,7 @@ public class JacksonExporter implements ModelExporter {
                     MapperFeature feature = MapperFeature.valueOf(enumName);
                     mapper.configure(feature, Boolean.valueOf(optionEntry.getValue()));
                 } catch (IllegalArgumentException e) {
-                    log.warn("Bad SerializationFeature option");
+                    log.warn("Bad MapperFeature option");
                 }
             }
         }
@@ -151,7 +151,7 @@ public class JacksonExporter implements ModelExporter {
                     MapperFeature feature = MapperFeature.valueOf(enumName);
                     mapper.configure(feature, Boolean.parseBoolean(mappingOptions.get(optionKey)));
                 } catch (IllegalArgumentException e) {
-                    log.warn("Bad SerializationFeature option");
+                    log.warn("Bad MapperFeature option");
                 }
             }
         }
