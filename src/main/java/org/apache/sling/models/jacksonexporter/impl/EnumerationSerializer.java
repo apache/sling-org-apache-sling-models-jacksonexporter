@@ -16,17 +16,18 @@
  */
 package org.apache.sling.models.jacksonexporter.impl;
 
+import java.io.IOException;
+import java.util.Enumeration;
+import java.util.Iterator;
+
+import org.apache.commons.collections4.iterators.EnumerationIterator;
+
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.ResolvableSerializer;
-import org.apache.commons.collections.iterators.EnumerationIterator;
-
-import java.io.IOException;
-import java.util.Enumeration;
-import java.util.Iterator;
 
 /**
  * Trivial serializer for Enumeration types (needed for Servlet APIs) which leverages
