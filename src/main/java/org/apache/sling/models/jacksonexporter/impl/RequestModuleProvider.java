@@ -21,19 +21,16 @@ import java.util.Enumeration;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.felix.scr.annotations.Component;
-import org.apache.felix.scr.annotations.Property;
-import org.apache.felix.scr.annotations.Service;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.models.jacksonexporter.ModuleProvider;
-import org.osgi.framework.Constants;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.propertytypes.ServiceRanking;
 
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
-@Component
-@Service
-@Property(name = Constants.SERVICE_RANKING, intValue = 0)
+@Component(service = ModuleProvider.class)
+@ServiceRanking(0)
 public class RequestModuleProvider implements ModuleProvider {
 
     private final SimpleModule moduleInstance;
@@ -50,4 +47,5 @@ public class RequestModuleProvider implements ModuleProvider {
     public Module getModule() {
         return moduleInstance;
     }
+
 }

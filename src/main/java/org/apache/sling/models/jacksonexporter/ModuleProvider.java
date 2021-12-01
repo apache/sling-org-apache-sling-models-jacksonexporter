@@ -16,9 +16,9 @@
  */
 package org.apache.sling.models.jacksonexporter;
 
-import com.fasterxml.jackson.databind.Module;
+import org.osgi.annotation.versioning.ConsumerType;
 
-import aQute.bnd.annotation.ConsumerType;
+import com.fasterxml.jackson.databind.Module;
 
 /**
  * Extension interface which allows for plugging in Jackson Modules
@@ -28,4 +28,5 @@ import aQute.bnd.annotation.ConsumerType;
 public interface ModuleProvider {
 
     Module getModule();
+
 }

@@ -16,38 +16,40 @@
  */
 package org.apache.sling.models.jacksonexporter.impl;
 
-import java.util.Map;
-
-import org.apache.felix.scr.annotations.Activate;
-import org.apache.felix.scr.annotations.Component;
-import org.apache.felix.scr.annotations.Property;
-import org.apache.felix.scr.annotations.Service;
 import org.apache.sling.api.resource.Resource;
-import org.apache.sling.commons.osgi.PropertiesUtil;
 import org.apache.sling.models.jacksonexporter.ModuleProvider;
-import org.osgi.framework.Constants;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.propertytypes.ServiceRanking;
+import org.osgi.service.metatype.annotations.AttributeDefinition;
+import org.osgi.service.metatype.annotations.Designate;
+import org.osgi.service.metatype.annotations.ObjectClassDefinition;
 
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
-@Component(metatype = true, label = "Apache Sling Models Jackson Exporter - Resource object support",
-    description = "Provider of a Jackson Module which enables support for proper serialization of Resource objects")
-@Service
-@Property(name = Constants.SERVICE_RANKING, intValue = 0, propertyPrivate = true)
+@Component(service = ModuleProvider.class)
+@ServiceRanking(0)
+@Designate(ocd = ResourceModuleProvider.Config.class)
 public class ResourceModuleProvider implements ModuleProvider {
 
     private static final int DEFAULT_MAX_RECURSION_LEVELS = -1;
 
-    @Property(label = "Maximum Recursion Levels",
-            description = "Maximum number of levels of child resources which will be exported for each resource. Specify -1 for infinite.",
-            intValue = DEFAULT_MAX_RECURSION_LEVELS)
-    private static final String PROP_MAX_RECURSION_LEVELS = "max.recursion.levels";
+    @ObjectClassDefinition(name = "Apache Sling Models Jackson Exporter - Resource object support",
+            description = "Provider of a Jackson Module which enables support for proper serialization of Resource objects")
+    static @interface Config {
+
+        @AttributeDefinition(name ="Maximum Recursion Levels",
+                description = "Maximum number of levels of child resources which will be exported for each resource. Specify -1 for infinite.")
+        int max_recursion_levels() default DEFAULT_MAX_RECURSION_LEVELS;
+
+    }
 
     private SimpleModule moduleInstance;
 
     @Activate
-    private void activate(Map<String, Object> props) {
-        final int maxRecursionLevels = PropertiesUtil.toInteger(props.get(PROP_MAX_RECURSION_LEVELS), DEFAULT_MAX_RECURSION_LEVELS);
+    private void activate(Config config) {
+        final int maxRecursionLevels = config.max_recursion_levels();
         this.moduleInstance = new SimpleModule();
         ModelSkippingSerializers serializers = new ModelSkippingSerializers();
         serializers.addSerializer(Resource.class, new ResourceSerializer(maxRecursionLevels));
