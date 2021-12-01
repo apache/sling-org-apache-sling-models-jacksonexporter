@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.MapperFeature;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.ReferenceCardinality;
@@ -32,17 +31,18 @@ import org.apache.sling.commons.osgi.Order;
 import org.apache.sling.commons.osgi.RankedServices;
 import org.apache.sling.models.export.spi.ModelExporter;
 import org.apache.sling.models.factory.ExportException;
+import org.apache.sling.models.jacksonexporter.ModuleProvider;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.SerializableString;
 import com.fasterxml.jackson.core.io.CharacterEscapes;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import org.apache.sling.models.jacksonexporter.ModuleProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Component
 @Service

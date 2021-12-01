@@ -16,9 +16,8 @@
  */
 package org.apache.sling.models.jacksonexporter.impl;
 
-import com.fasterxml.jackson.databind.Module;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.databind.module.SimpleSerializers;
+import java.util.Map;
+
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Property;
@@ -28,7 +27,8 @@ import org.apache.sling.commons.osgi.PropertiesUtil;
 import org.apache.sling.models.jacksonexporter.ModuleProvider;
 import org.osgi.framework.Constants;
 
-import java.util.Map;
+import com.fasterxml.jackson.databind.Module;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 
 @Component(metatype = true, label = "Apache Sling Models Jackson Exporter - Resource object support",
     description = "Provider of a Jackson Module which enables support for proper serialization of Resource objects")

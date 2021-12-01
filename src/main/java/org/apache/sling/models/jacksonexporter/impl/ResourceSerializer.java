@@ -16,21 +16,21 @@
  */
 package org.apache.sling.models.jacksonexporter.impl;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Array;
+import java.util.Calendar;
+import java.util.Iterator;
+import java.util.Map;
+
+import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ValueMap;
+
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.ResolvableSerializer;
-import org.apache.sling.api.resource.Resource;
-import org.apache.sling.api.resource.ValueMap;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Array;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Iterator;
-import java.util.Map;
 
 public class ResourceSerializer extends JsonSerializer<Resource> implements ResolvableSerializer {
 

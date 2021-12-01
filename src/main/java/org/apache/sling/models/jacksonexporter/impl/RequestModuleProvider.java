@@ -16,21 +16,20 @@
  */
 package org.apache.sling.models.jacksonexporter.impl;
 
-import com.fasterxml.jackson.databind.Module;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.databind.module.SimpleSerializers;
-import org.apache.felix.scr.annotations.Activate;
+import java.util.Enumeration;
+
+import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Property;
 import org.apache.felix.scr.annotations.Service;
 import org.apache.sling.api.SlingHttpServletRequest;
-import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.jacksonexporter.ModuleProvider;
 import org.osgi.framework.Constants;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.http.HttpServletRequest;
-import java.util.Enumeration;
+import com.fasterxml.jackson.databind.Module;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 
 @Component
 @Service

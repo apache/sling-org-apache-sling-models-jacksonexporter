@@ -16,13 +16,14 @@
  */
 package org.apache.sling.models.jacksonexporter.impl;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonGetter;
+import java.security.Principal;
+import java.util.Enumeration;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import java.security.Principal;
-import java.util.Enumeration;
+
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonGetter;
 
 @JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE, fieldVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE)
 public abstract class HttpServletRequestMixin extends ServletRequestMixin implements HttpServletRequest {
