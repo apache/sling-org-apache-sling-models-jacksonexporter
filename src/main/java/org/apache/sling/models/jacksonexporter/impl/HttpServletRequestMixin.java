@@ -94,7 +94,7 @@ public abstract class HttpServletRequestMixin extends ServletRequestMixin implem
 
     @JsonGetter
     @Override
-    public abstract Enumeration getHeaderNames();
+    public abstract Enumeration<String> getHeaderNames();
 
     @JsonGetter
     @Override

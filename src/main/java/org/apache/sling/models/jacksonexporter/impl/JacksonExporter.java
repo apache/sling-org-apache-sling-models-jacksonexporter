@@ -64,6 +64,7 @@ public class JacksonExporter implements ModelExporter {
     }
 
     @Override
+    @SuppressWarnings({ "null", "unchecked" })
     public <T> T export(@NotNull Object model, @NotNull Class<T> clazz, @NotNull Map<String, String> options)
             throws ExportException {
         ObjectMapper mapper = new ObjectMapper();
@@ -137,6 +138,8 @@ public class JacksonExporter implements ModelExporter {
     }
 
     private static class EscapeCloseScriptBlocks extends CharacterEscapes {
+        private static final long serialVersionUID = 384022064440034138L;
+
         private final int[] escapes;
 
         EscapeCloseScriptBlocks() {

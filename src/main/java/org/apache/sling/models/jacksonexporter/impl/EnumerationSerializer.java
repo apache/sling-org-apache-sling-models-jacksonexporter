@@ -43,7 +43,9 @@ public class EnumerationSerializer extends JsonSerializer<Enumeration> implement
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void serialize(Enumeration value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
         iteratorSerializer.serialize(new EnumerationIterator(value), jgen, provider);
     }
+
 }

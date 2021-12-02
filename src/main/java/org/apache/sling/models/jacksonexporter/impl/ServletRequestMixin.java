@@ -30,7 +30,7 @@ public abstract class ServletRequestMixin implements ServletRequest {
 
     @JsonGetter("parameters")
     @Override
-    public abstract Map getParameterMap();
+    public abstract Map<String,String[]> getParameterMap();
 
     @JsonGetter
     @Override
@@ -65,7 +65,7 @@ public abstract class ServletRequestMixin implements ServletRequest {
     public abstract boolean isSecure();
 
     @Override
-    public abstract Enumeration getLocales();
+    public abstract Enumeration<Locale> getLocales();
 
     @Override
     public abstract String getCharacterEncoding();

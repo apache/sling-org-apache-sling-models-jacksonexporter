@@ -47,6 +47,7 @@ public class ResourceSerializer extends JsonSerializer<Resource> implements Reso
     }
 
     /** Dump given resource in JSON, optionally recursing into its objects */
+    @SuppressWarnings({ "unused", "null" })
     private void create(final Resource resource, final JsonGenerator jgen, final int currentRecursionLevel,
                                      final SerializerProvider provider) throws IOException {
         jgen.writeStartObject();
@@ -107,6 +108,7 @@ public class ResourceSerializer extends JsonSerializer<Resource> implements Reso
     /**
      * Write a single property
      */
+    @SuppressWarnings("null")
     private void createProperty(final JsonGenerator jgen, final ValueMap valueMap, final String key, final Object value,
                                 final SerializerProvider provider)
             throws IOException {

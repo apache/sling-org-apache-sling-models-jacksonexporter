@@ -25,7 +25,9 @@ import com.fasterxml.jackson.databind.SerializationConfig;
 import com.fasterxml.jackson.databind.module.SimpleSerializers;
 
 public class ModelSkippingSerializers extends SimpleSerializers {
+    private static final long serialVersionUID = -638837465287955097L;
 
+    @SuppressWarnings("unused")
     @Override
     public JsonSerializer<?> findSerializer(SerializationConfig config, JavaType type, BeanDescription beanDesc) {
         Class<?> clazz = type.getRawClass();

@@ -98,6 +98,7 @@ public class ModelSkippingSerializersTest {
         }
 
         @Override
+        @SuppressWarnings("null")
         public <AdapterType> AdapterType adaptTo(Class<AdapterType> type) {
             return null;
         }
@@ -161,6 +162,7 @@ public class ModelSkippingSerializersTest {
         }
 
         @Override
+        @SuppressWarnings("null")
         public <AdapterType> AdapterType adaptTo(Class<AdapterType> type) {
             return null;
         }
