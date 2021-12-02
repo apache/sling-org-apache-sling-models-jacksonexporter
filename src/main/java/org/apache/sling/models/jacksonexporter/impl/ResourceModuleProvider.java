@@ -20,7 +20,6 @@ import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.jacksonexporter.ModuleProvider;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.propertytypes.ServiceRanking;
 import org.osgi.service.metatype.annotations.AttributeDefinition;
 import org.osgi.service.metatype.annotations.Designate;
 import org.osgi.service.metatype.annotations.ObjectClassDefinition;
@@ -29,7 +28,6 @@ import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
 @Component(service = ModuleProvider.class)
-@ServiceRanking(0)
 @Designate(ocd = ResourceModuleProvider.Config.class)
 public class ResourceModuleProvider implements ModuleProvider {
 

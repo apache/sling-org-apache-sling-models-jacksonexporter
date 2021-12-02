@@ -24,13 +24,11 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.models.jacksonexporter.ModuleProvider;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.propertytypes.ServiceRanking;
 
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
 @Component(service = ModuleProvider.class)
-@ServiceRanking(0)
 public class RequestModuleProvider implements ModuleProvider {
 
     private final SimpleModule moduleInstance;
