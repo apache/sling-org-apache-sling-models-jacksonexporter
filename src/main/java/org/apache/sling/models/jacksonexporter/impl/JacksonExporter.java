@@ -24,7 +24,6 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.models.export.spi.ModelExporter;
 import org.apache.sling.models.factory.ExportException;
 import org.apache.sling.models.jacksonexporter.ModuleProvider;
@@ -62,11 +61,14 @@ public class JacksonExporter implements ModelExporter {
 
     private static final int MAPPER_FEATURE_PREFIX_LENGTH = MAPPER_FEATURE_PREFIX.length();
 
-    @ObjectClassDefinition
+    @ObjectClassDefinition(name = "Apache Sling Models Jackson Exporter",
+            description = "Configures the Jackson JSON Exporter for Sling Models.")
     static @interface Config {
 
         @AttributeDefinition(name ="Mapping options",
-                description = "Mapping options to override default Jackson settings, E.g.: 'MapperFeature.SORT_PROPERTIES_ALPHABETICALLY=true'")
+                description = "Mapping options to override default Jackson settings. "
+                    + "Mapping options that are passed via request parameters have higher precedence. "
+                    + "Example: SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS=true, MapperFeature.SORT_PROPERTIES_ALPHABETICALLY=true")
         String[] mapping_options();
 
     }
@@ -86,8 +88,9 @@ public class JacksonExporter implements ModelExporter {
     @SuppressWarnings({ "null", "unchecked" })
     public <T> T export(@NotNull Object model, @NotNull Class<T> clazz, @NotNull Map<String, String> options)
             throws ExportException {
-        ObjectMapper mapper = getDefaultMapper();
-        for (Map.Entry<String, String> optionEntry : options.entrySet()) {
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String,String> mergedOptions = mergeWithConfiguredOptions(options);
+        for (Map.Entry<String, String> optionEntry : mergedOptions.entrySet()) {
             String key = optionEntry.getKey();
             if (key.startsWith(SERIALIZATION_FEATURE_PREFIX)) {
                 String enumName = key.substring(SERIALIZATION_FEATURE_PREFIX_LENGTH);
@@ -119,8 +122,8 @@ public class JacksonExporter implements ModelExporter {
             StringWriter writer = new StringWriter();
             JsonGenerator jgen;
             final boolean printTidy;
-            if (options.containsKey("tidy")) {
-                printTidy = Boolean.valueOf(options.get("tidy"));
+            if (mergedOptions.containsKey("tidy")) {
+                printTidy = Boolean.valueOf(mergedOptions.get("tidy"));
             } else {
                 printTidy = false;
             }
@@ -140,34 +143,16 @@ public class JacksonExporter implements ModelExporter {
         }
     }
 
-    private ObjectMapper getDefaultMapper() {
-        ObjectMapper mapper = new ObjectMapper();
-
-        for (Map.Entry<String, String> option: mappingOptions.entrySet()) {
-            if (option.getKey().startsWith(SERIALIZATION_FEATURE_PREFIX)) {
-                String enumName = option.getKey().substring(SERIALIZATION_FEATURE_PREFIX_LENGTH);
-                try {
-                    SerializationFeature feature = SerializationFeature.valueOf(enumName);
-                    mapper.configure(feature, Boolean.parseBoolean(option.getValue()));
-                } catch (IllegalArgumentException e) {
-                    log.warn("Bad SerializationFeature option");
-                }
-            } else if (option.getKey().startsWith(MAPPER_FEATURE_PREFIX)) {
-                String enumName = option.getKey().substring(MAPPER_FEATURE_PREFIX_LENGTH);
-                try {
-                    MapperFeature feature = MapperFeature.valueOf(enumName);
-                    mapper.configure(feature, Boolean.parseBoolean(option.getValue()));
-                } catch (IllegalArgumentException e) {
-                    log.warn("Bad MapperFeature option");
-                }
-            }
-        }
-        return mapper;
+    private Map<String,String> mergeWithConfiguredOptions(@NotNull Map<String, String> options) {
+        Map<String,String> mergedMap = new LinkedHashMap<>();
+        mergedMap.putAll(mappingOptions);
+        mergedMap.putAll(options);
+        return mergedMap;
     }
 
     @Activate
     private void activate(Config config) {
-        this.mappingOptions = toMap(config.mapping_options());
+        this.mappingOptions = PropertiesUtil.toMap(config.mapping_options());
     }
 
     @Override
@@ -196,38 +181,6 @@ public class JacksonExporter implements ModelExporter {
         public SerializableString getEscapeSequence(final int arg0) {
             return null;
         }
-    }
-
-    /**
-     * Returns the parameter as a map with string keys and string values.
-     *
-     * The parameter is considered as a collection whose entries are of the form
-     * key=value. The conversion has following rules
-     * <ul>
-     *     <li>Entries are of the form key=value</li>
-     *     <li>key is trimmed</li>
-     *     <li>value is trimmed. If a trimmed value results in an empty string it is treated as null</li>
-     *     <li>Malformed entries like 'foo','foo=' are ignored</li>
-     *     <li>Map entries maintain the input order</li>
-     * </ul>
-     *
-     * @param arrayValue The array to be converted to map.
-     * @return Map value
-     */
-    private static Map<String, String> toMap(String @NotNull [] arrayValue) {
-        //in property values
-        Map<String, String> result = new LinkedHashMap<>();
-        for (String kv : arrayValue) {
-            int indexOfEqual = kv.indexOf('=');
-            if (indexOfEqual > 0) {
-                String key = StringUtils.trimToNull(kv.substring(0, indexOfEqual));
-                String value = StringUtils.trimToNull(kv.substring(indexOfEqual + 1));
-                if (key != null) {
-                    result.put(key, value);
-                }
-            }
-        }
-        return result;
     }
 
 }
