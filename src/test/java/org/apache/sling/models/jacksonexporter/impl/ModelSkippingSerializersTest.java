@@ -16,8 +16,8 @@
  */
 package org.apache.sling.models.jacksonexporter.impl;
 
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Iterator;
 
@@ -27,35 +27,35 @@ import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceMetadata;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.models.annotations.Model;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 
-public class ModelSkippingSerializersTest {
+class ModelSkippingSerializersTest {
 
     private ModelSkippingSerializers serializers = new ModelSkippingSerializers();
     private JavaType nonAnnotatedType = TypeFactory.defaultInstance().constructType(NonAnnotated.class);
     private JavaType annotatedType = TypeFactory.defaultInstance().constructType(Annotated.class);
 
-    @Before
-    public void setup() {
+    @BeforeEach
+    void setup() {
         serializers.addSerializer(Resource.class, new ResourceSerializer(-1));
     }
 
     @Test
-    public void testDefaultSerializerAccess() {
+    void testDefaultSerializerAccess() {
         assertTrue(serializers.findSerializer(null, nonAnnotatedType, null) instanceof ResourceSerializer);
     }
 
     @Test
-    public void testAnnotatedNullLookup() {
+    void testAnnotatedNullLookup() {
         assertNull(serializers.findSerializer(null, annotatedType, null));
     }
 
     @Model(adaptables = SlingHttpServletRequest.class)
-    private class Annotated extends AbstractResource {
+    private static class Annotated extends AbstractResource {
 
         @Override
         public String getName() {
@@ -119,7 +119,7 @@ public class ModelSkippingSerializersTest {
         }
     }
 
-    private class NonAnnotated extends AbstractResource {
+    private static class NonAnnotated extends AbstractResource {
 
         @Override
         public String getName() {
