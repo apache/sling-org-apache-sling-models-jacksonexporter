@@ -20,10 +20,9 @@ package org.apache.sling.models.jacksonexporter.impl;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.Collection;
 import java.util.Map;
 
-import org.apache.sling.commons.osgi.Order;
-import org.apache.sling.commons.osgi.RankedServices;
 import org.apache.sling.models.export.spi.ModelExporter;
 import org.apache.sling.models.factory.ExportException;
 import org.apache.sling.models.jacksonexporter.ModuleProvider;
@@ -56,7 +55,9 @@ public class JacksonExporter implements ModelExporter {
 
     private static final int MAPPER_FEATURE_PREFIX_LENGTH = MAPPER_FEATURE_PREFIX.length();
 
-    private final RankedServices<ModuleProvider> moduleProviders = new RankedServices<>(Order.ASCENDING);
+    @Reference(service = ModuleProvider.class,
+            cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
+    private volatile Collection<ModuleProvider> moduleProviders;
 
     @Override
     public boolean isSupported(@NotNull Class<?> clazz) {
@@ -119,17 +120,6 @@ public class JacksonExporter implements ModelExporter {
         } else {
             return null;
         }
-    }
-
-    @Reference(name = "moduleProvider", service = ModuleProvider.class,
-            cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC,
-            bind = "bindModuleProvider", unbind = "unbindModuleProvider")
-    protected void bindModuleProvider(final ModuleProvider moduleProvider, final Map<String, Object> props) {
-        moduleProviders.bind(moduleProvider, props);
-    }
-
-    protected void unbindModuleProvider(final ModuleProvider moduleProvider, final Map<String, Object> props) {
-        moduleProviders.unbind(moduleProvider, props);
     }
 
     @Override
