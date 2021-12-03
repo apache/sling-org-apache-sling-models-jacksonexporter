@@ -16,9 +16,11 @@
  */
 package org.apache.sling.models.jacksonexporter.impl;
 
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.SerializationConfig;
-import com.fasterxml.jackson.databind.type.TypeFactory;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Iterator;
+
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.AbstractResource;
 import org.apache.sling.api.resource.Resource;
@@ -28,9 +30,8 @@ import org.apache.sling.models.annotations.Model;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Iterator;
-
-import static org.junit.Assert.*;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 
 public class ModelSkippingSerializersTest {
 
@@ -97,6 +98,7 @@ public class ModelSkippingSerializersTest {
         }
 
         @Override
+        @SuppressWarnings("null")
         public <AdapterType> AdapterType adaptTo(Class<AdapterType> type) {
             return null;
         }
@@ -160,6 +162,7 @@ public class ModelSkippingSerializersTest {
         }
 
         @Override
+        @SuppressWarnings("null")
         public <AdapterType> AdapterType adaptTo(Class<AdapterType> type) {
             return null;
         }

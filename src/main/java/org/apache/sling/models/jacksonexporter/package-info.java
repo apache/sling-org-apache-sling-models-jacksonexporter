@@ -15,7 +15,5 @@
  * limitations under the License.
  */
 
-@Version("1.0.0")
+@org.osgi.annotation.versioning.Version("1.0.1")
 package org.apache.sling.models.jacksonexporter;
-
-import aQute.bnd.annotation.Version;

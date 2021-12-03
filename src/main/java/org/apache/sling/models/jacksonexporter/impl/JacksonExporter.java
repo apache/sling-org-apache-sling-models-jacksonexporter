@@ -18,6 +18,28 @@
  */
 package org.apache.sling.models.jacksonexporter.impl;
 
+import java.io.IOException;
+import java.io.StringWriter;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.sling.models.export.spi.ModelExporter;
+import org.apache.sling.models.factory.ExportException;
+import org.apache.sling.models.jacksonexporter.ModuleProvider;
+import org.jetbrains.annotations.NotNull;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
+import org.osgi.service.metatype.annotations.AttributeDefinition;
+import org.osgi.service.metatype.annotations.Designate;
+import org.osgi.service.metatype.annotations.ObjectClassDefinition;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.SerializableString;
@@ -25,23 +47,9 @@ import com.fasterxml.jackson.core.io.CharacterEscapes;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import org.apache.felix.scr.annotations.*;
-import org.apache.sling.commons.osgi.Order;
-import org.apache.sling.commons.osgi.PropertiesUtil;
-import org.apache.sling.commons.osgi.RankedServices;
-import org.apache.sling.models.export.spi.ModelExporter;
-import org.apache.sling.models.factory.ExportException;
-import org.apache.sling.models.jacksonexporter.ModuleProvider;
-import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.util.Map;
-
-@Component(metatype = true)
-@Service
+@Component(service = ModelExporter.class)
+@Designate(ocd = JacksonExporter.Config.class)
 public class JacksonExporter implements ModelExporter {
 
     private static final Logger log = LoggerFactory.getLogger(JacksonExporter.class);
@@ -54,12 +62,18 @@ public class JacksonExporter implements ModelExporter {
 
     private static final int MAPPER_FEATURE_PREFIX_LENGTH = MAPPER_FEATURE_PREFIX.length();
 
-    @Property(value = {}, cardinality = Integer.MAX_VALUE, label = "Mapping options", description = "Mapping options to override default Jackson settings, E.g.: 'MapperFeature.SORT_PROPERTIES_ALPHABETICALLY=true'")
-    public static final String MAPPING_OPTIONS = "mapping.options";
+    @ObjectClassDefinition
+    static @interface Config {
 
-    @Reference(name = "moduleProvider", referenceInterface = ModuleProvider.class,
-            cardinality = ReferenceCardinality.OPTIONAL_MULTIPLE, policy = ReferencePolicy.DYNAMIC)
-    private final RankedServices<ModuleProvider> moduleProviders = new RankedServices<ModuleProvider>(Order.ASCENDING);
+        @AttributeDefinition(name ="Mapping options",
+                description = "Mapping options to override default Jackson settings, E.g.: 'MapperFeature.SORT_PROPERTIES_ALPHABETICALLY=true'")
+        String[] mapping_options();
+
+    }
+
+    @Reference(service = ModuleProvider.class,
+            cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
+    private volatile Collection<ModuleProvider> moduleProviders;
 
     private Map<String, String> mappingOptions;
 
@@ -69,6 +83,7 @@ public class JacksonExporter implements ModelExporter {
     }
 
     @Override
+    @SuppressWarnings({ "null", "unchecked" })
     public <T> T export(@NotNull Object model, @NotNull Class<T> clazz, @NotNull Map<String, String> options)
             throws ExportException {
         ObjectMapper mapper = getDefaultMapper();
@@ -80,7 +95,7 @@ public class JacksonExporter implements ModelExporter {
                     SerializationFeature feature = SerializationFeature.valueOf(enumName);
                     mapper.configure(feature, Boolean.valueOf(optionEntry.getValue()));
                 } catch (IllegalArgumentException e) {
-                    log.warn("Bad SerializationFeature option");
+                    log.warn("Bad SerializationFeature option: {}", enumName);
                 }
             } else if (key.startsWith(MAPPER_FEATURE_PREFIX)) {
                 String enumName = key.substring(MAPPER_FEATURE_PREFIX_LENGTH);
@@ -88,7 +103,7 @@ public class JacksonExporter implements ModelExporter {
                     MapperFeature feature = MapperFeature.valueOf(enumName);
                     mapper.configure(feature, Boolean.valueOf(optionEntry.getValue()));
                 } catch (IllegalArgumentException e) {
-                    log.warn("Bad MapperFeature option");
+                    log.warn("Bad MapperFeature option: {}", enumName);
                 }
             }
         }
@@ -125,14 +140,6 @@ public class JacksonExporter implements ModelExporter {
         }
     }
 
-    protected void bindModuleProvider(final ModuleProvider moduleProvider, final Map<String, Object> props) {
-        moduleProviders.bind(moduleProvider, props);
-    }
-
-    protected void unbindModuleProvider(final ModuleProvider moduleProvider, final Map<String, Object> props) {
-        moduleProviders.unbind(moduleProvider, props);
-    }
-
     private ObjectMapper getDefaultMapper() {
         ObjectMapper mapper = new ObjectMapper();
 
@@ -158,10 +165,9 @@ public class JacksonExporter implements ModelExporter {
         return mapper;
     }
 
-    @Modified
     @Activate
-    public void activate(Map<String, Object> properties) {
-        this.mappingOptions = PropertiesUtil.toMap(properties.get(MAPPING_OPTIONS), new String[0]);
+    private void activate(Config config) {
+        this.mappingOptions = toMap(config.mapping_options());
     }
 
     @Override
@@ -170,6 +176,8 @@ public class JacksonExporter implements ModelExporter {
     }
 
     private static class EscapeCloseScriptBlocks extends CharacterEscapes {
+        private static final long serialVersionUID = 384022064440034138L;
+
         private final int[] escapes;
 
         EscapeCloseScriptBlocks() {
@@ -189,4 +197,37 @@ public class JacksonExporter implements ModelExporter {
             return null;
         }
     }
+
+    /**
+     * Returns the parameter as a map with string keys and string values.
+     *
+     * The parameter is considered as a collection whose entries are of the form
+     * key=value. The conversion has following rules
+     * <ul>
+     *     <li>Entries are of the form key=value</li>
+     *     <li>key is trimmed</li>
+     *     <li>value is trimmed. If a trimmed value results in an empty string it is treated as null</li>
+     *     <li>Malformed entries like 'foo','foo=' are ignored</li>
+     *     <li>Map entries maintain the input order</li>
+     * </ul>
+     *
+     * @param arrayValue The array to be converted to map.
+     * @return Map value
+     */
+    private static Map<String, String> toMap(String @NotNull [] arrayValue) {
+        //in property values
+        Map<String, String> result = new LinkedHashMap<>();
+        for (String kv : arrayValue) {
+            int indexOfEqual = kv.indexOf('=');
+            if (indexOfEqual > 0) {
+                String key = StringUtils.trimToNull(kv.substring(0, indexOfEqual));
+                String value = StringUtils.trimToNull(kv.substring(indexOfEqual + 1));
+                if (key != null) {
+                    result.put(key, value);
+                }
+            }
+        }
+        return result;
+    }
+
 }

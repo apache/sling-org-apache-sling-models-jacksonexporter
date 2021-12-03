@@ -16,15 +16,18 @@
  */
 package org.apache.sling.models.jacksonexporter.impl;
 
+import org.apache.sling.models.annotations.Model;
+
 import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializationConfig;
 import com.fasterxml.jackson.databind.module.SimpleSerializers;
-import org.apache.sling.models.annotations.Model;
 
 public class ModelSkippingSerializers extends SimpleSerializers {
+    private static final long serialVersionUID = -638837465287955097L;
 
+    @SuppressWarnings("unused")
     @Override
     public JsonSerializer<?> findSerializer(SerializationConfig config, JavaType type, BeanDescription beanDesc) {
         Class<?> clazz = type.getRawClass();

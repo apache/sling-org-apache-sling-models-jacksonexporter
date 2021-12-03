@@ -16,21 +16,21 @@
  */
 package org.apache.sling.models.jacksonexporter.impl;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Array;
+import java.util.Calendar;
+import java.util.Iterator;
+import java.util.Map;
+
+import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ValueMap;
+
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.ResolvableSerializer;
-import org.apache.sling.api.resource.Resource;
-import org.apache.sling.api.resource.ValueMap;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Array;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Iterator;
-import java.util.Map;
 
 public class ResourceSerializer extends JsonSerializer<Resource> implements ResolvableSerializer {
 
@@ -47,6 +47,7 @@ public class ResourceSerializer extends JsonSerializer<Resource> implements Reso
     }
 
     /** Dump given resource in JSON, optionally recursing into its objects */
+    @SuppressWarnings({ "unused", "null" })
     private void create(final Resource resource, final JsonGenerator jgen, final int currentRecursionLevel,
                                      final SerializerProvider provider) throws IOException {
         jgen.writeStartObject();
@@ -107,6 +108,7 @@ public class ResourceSerializer extends JsonSerializer<Resource> implements Reso
     /**
      * Write a single property
      */
+    @SuppressWarnings("null")
     private void createProperty(final JsonGenerator jgen, final ValueMap valueMap, final String key, final Object value,
                                 final SerializerProvider provider)
             throws IOException {
