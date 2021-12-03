@@ -76,7 +76,7 @@ public class JacksonExporter implements ModelExporter {
                     SerializationFeature feature = SerializationFeature.valueOf(enumName);
                     mapper.configure(feature, Boolean.valueOf(optionEntry.getValue()));
                 } catch (IllegalArgumentException e) {
-                    log.warn("Bad SerializationFeature option");
+                    log.warn("Bad SerializationFeature option: {}", enumName);
                 }
             } else if (key.startsWith(MAPPER_FEATURE_PREFIX)) {
                 String enumName = key.substring(MAPPER_FEATURE_PREFIX_LENGTH);
@@ -84,7 +84,7 @@ public class JacksonExporter implements ModelExporter {
                     MapperFeature feature = MapperFeature.valueOf(enumName);
                     mapper.configure(feature, Boolean.valueOf(optionEntry.getValue()));
                 } catch (IllegalArgumentException e) {
-                    log.warn("Bad SerializationFeature option");
+                    log.warn("Bad MapperFeature option: {}", enumName);
                 }
             }
         }
