@@ -18,7 +18,6 @@ package org.apache.sling.models.jacksonexporter.impl;
 
 import java.util.Enumeration;
 
-import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.request.RequestPathInfo;
 import org.apache.sling.api.resource.Resource;
 
@@ -30,22 +29,18 @@ import com.fasterxml.jackson.annotation.JsonGetter;
  * Without it, the auto-detection may lead to unexpected results, e.g. StackOverflow errors.
  */
 @JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE, fieldVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE)
-public interface SlingHttpServletRequestMixin extends HttpServletRequestMixin, SlingHttpServletRequest {
+public interface SlingHttpServletRequestMixin extends HttpServletRequestMixin {
 
     @JsonGetter
-    @Override
     public Resource getResource();
 
     @JsonGetter
-    @Override
     public RequestPathInfo getRequestPathInfo();
 
     @JsonGetter
-    @Override
     public String getResponseContentType();
 
     @JsonGetter()
-    @Override
     public Enumeration<String> getResponseContentTypes();
 
 }
