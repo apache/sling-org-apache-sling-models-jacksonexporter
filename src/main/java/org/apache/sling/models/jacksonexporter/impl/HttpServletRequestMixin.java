@@ -25,78 +25,82 @@ import javax.servlet.http.HttpServletRequest;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonGetter;
 
+/**
+ * This "mixin" interface instructs the Jackson ObjectMapper what properties should be included in JSON view of a HttpServletRequest object.
+ * Without it, the auto-detection may lead to unexpected results, e.g. StackOverflow errors.
+ */
 @JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE, fieldVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE)
-public abstract class HttpServletRequestMixin extends ServletRequestMixin implements HttpServletRequest {
+public interface HttpServletRequestMixin extends ServletRequestMixin, HttpServletRequest {
 
     @JsonGetter
     @Override
-    public abstract String getAuthType();
+    public String getAuthType();
 
     @JsonGetter
     @Override
-    public abstract Cookie[] getCookies();
+    public Cookie[] getCookies();
 
     @JsonGetter
     @Override
-    public abstract String getMethod();
+    public String getMethod();
 
     @JsonGetter
     @Override
-    public abstract String getPathInfo();
+    public String getPathInfo();
 
     @JsonGetter
     @Override
-    public abstract String getPathTranslated();
+    public String getPathTranslated();
 
     @JsonGetter
     @Override
-    public abstract String getContextPath();
+    public String getContextPath();
 
     @JsonGetter
     @Override
-    public abstract String getQueryString();
+    public String getQueryString();
 
     @JsonGetter
     @Override
-    public abstract  String getRemoteUser();
+    public  String getRemoteUser();
 
     @JsonGetter
     @Override
-    public abstract String getRemoteHost();
+    public String getRemoteHost();
 
     @JsonGetter
     @Override
-    public abstract Principal getUserPrincipal();
+    public Principal getUserPrincipal();
 
     @JsonGetter
     @Override
-    public abstract String getRequestedSessionId();
+    public String getRequestedSessionId();
 
     @JsonGetter
     @Override
-    public abstract String getRequestURI();
+    public String getRequestURI();
 
     @JsonGetter
     @Override
-    public abstract boolean isRequestedSessionIdFromCookie();
+    public boolean isRequestedSessionIdFromCookie();
 
     @JsonGetter
     @Override
-    public abstract boolean isRequestedSessionIdFromURL();
+    public boolean isRequestedSessionIdFromURL();
 
     @JsonGetter
     @Override
-    public abstract boolean isRequestedSessionIdValid();
+    public boolean isRequestedSessionIdValid();
 
     @JsonGetter
     @Override
-    public abstract boolean isRequestedSessionIdFromUrl();
+    public boolean isRequestedSessionIdFromUrl();
 
     @JsonGetter
     @Override
-    public abstract Enumeration<String> getHeaderNames();
+    public Enumeration<String> getHeaderNames();
 
     @JsonGetter
     @Override
-    public abstract String getServletPath();
+    public String getServletPath();
 }

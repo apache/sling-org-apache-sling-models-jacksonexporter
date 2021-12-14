@@ -18,30 +18,29 @@ package org.apache.sling.models.jacksonexporter.impl;
 
 import java.util.Enumeration;
 
-import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.request.RequestPathInfo;
 import org.apache.sling.api.resource.Resource;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonGetter;
 
+/**
+ * This "mixin" interface instructs the Jackson ObjectMapper what properties should be included in JSON view of a SlingHttpServletRequest object.
+ * Without it, the auto-detection may lead to unexpected results, e.g. StackOverflow errors.
+ */
 @JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE, fieldVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE)
-public abstract class SlingHttpServletRequestMixin extends HttpServletRequestMixin implements SlingHttpServletRequest {
+public interface SlingHttpServletRequestMixin extends HttpServletRequestMixin {
 
     @JsonGetter
-    @Override
-    public abstract Resource getResource();
+    public Resource getResource();
 
     @JsonGetter
-    @Override
-    public abstract RequestPathInfo getRequestPathInfo();
+    public RequestPathInfo getRequestPathInfo();
 
     @JsonGetter
-    @Override
-    public abstract String getResponseContentType();
+    public String getResponseContentType();
 
     @JsonGetter()
-    @Override
-    public abstract Enumeration<String> getResponseContentTypes();
+    public Enumeration<String> getResponseContentTypes();
 
 }

@@ -25,63 +25,67 @@ import javax.servlet.ServletRequest;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonGetter;
 
+/**
+ * This "mixin" interface instructs the Jackson ObjectMapper what properties should be included in JSON view of a ServletRequest object.
+ * Without it, the auto-detection may lead to unexpected results, e.g. StackOverflow errors.
+ */
 @JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE, fieldVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE)
-public abstract class ServletRequestMixin implements ServletRequest {
+public interface ServletRequestMixin extends ServletRequest {
 
     @JsonGetter("parameters")
     @Override
-    public abstract Map<String,String[]> getParameterMap();
+    public Map<String,String[]> getParameterMap();
 
     @JsonGetter
     @Override
-    public abstract Locale getLocale();
+    public Locale getLocale();
 
     @JsonGetter
     @Override
-    public abstract String getContentType();
+    public String getContentType();
 
     @JsonGetter
     @Override
-    public abstract int getContentLength();
+    public int getContentLength();
 
     @JsonGetter
     @Override
-    public abstract int getRemotePort();
+    public int getRemotePort();
 
     @JsonGetter
     @Override
-    public abstract String getRemoteAddr();
+    public String getRemoteAddr();
 
     @JsonGetter
     @Override
-    public abstract int getServerPort();
+    public int getServerPort();
 
     @JsonGetter
     @Override
-    public abstract String getServerName();
+    public String getServerName();
 
     @JsonGetter
     @Override
-    public abstract boolean isSecure();
+    public boolean isSecure();
 
     @Override
-    public abstract Enumeration<Locale> getLocales();
+    public Enumeration<Locale> getLocales();
 
     @Override
-    public abstract String getCharacterEncoding();
+    public String getCharacterEncoding();
 
     @Override
-    public abstract int getLocalPort();
+    public int getLocalPort();
 
     @Override
-    public abstract String getLocalAddr();
+    public String getLocalAddr();
 
     @Override
-    public abstract String getLocalName();
+    public String getLocalName();
 
     @Override
-    public abstract String getProtocol();
+    public String getProtocol();
 
     @Override
-    public abstract String getScheme();
+    public String getScheme();
 }
