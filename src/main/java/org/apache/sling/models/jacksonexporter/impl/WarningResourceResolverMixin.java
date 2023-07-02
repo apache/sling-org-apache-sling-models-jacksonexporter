@@ -61,7 +61,7 @@ public interface WarningResourceResolverMixin extends ResourceResolver {
 
         @Override
         public void serialize(Boolean value, JsonGenerator jgen, SerializerProvider provider)
-                throws IOException, JsonProcessingException {
+                throws IOException {
             LOG.warn(MESSAGE);
             jgen.writeObject(value);
             

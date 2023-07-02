@@ -44,14 +44,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import ch.qos.logback.classic.Level;
 
 @ExtendWith(OsgiContextExtension.class)
-public class JacksonExporterLimitSerializationTest {
+class JacksonExporterLimitSerializationTest {
 
     private OsgiContext context = new OsgiContext();
     
     
     
     @Test
-    public void testWarnLogWhenSerializingResourceResolver() throws ExportException {
+    void testWarnLogWhenSerializingResourceResolver() throws ExportException {
         
         LogCapture capture = new LogCapture(JacksonExporter.class.getName(),false);
         
@@ -71,7 +71,7 @@ public class JacksonExporterLimitSerializationTest {
     
     
     @Test
-    public void testNotSerializingResourceResolverWhenDisabled() throws ExportException {
+    void testNotSerializingResourceResolverWhenDisabled() throws ExportException {
         
         LogCapture capture = new LogCapture(IgnoringResourceResolverMixin.class.getName(),false);        
         PojoWithResourceResolver pojo = new PojoWithResourceResolver("text",new EmptyResourceResolver());
@@ -85,6 +85,7 @@ public class JacksonExporterLimitSerializationTest {
 
         String expectedJson = "{\"msg\":\"text\"}";
         assertEquals(expectedJson, underTest.export(pojo, String.class, options));
+        
 //        assertTrue(capture.anyMatch(p -> p.getFormattedMessage().contains(IgnoringResourceResolverMixin.MESSAGE)));
     }
     
