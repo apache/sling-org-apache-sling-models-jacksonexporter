@@ -159,12 +159,6 @@ public class JacksonExporterLimitSerializationTest {
         }
 
         @Override
-        public Resource getParent(Resource child) {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-        @Override
         public Iterable<Resource> getChildren(Resource parent) {
             // TODO Auto-generated method stub
             return null;
@@ -182,11 +176,6 @@ public class JacksonExporterLimitSerializationTest {
             return null;
         }
 
-        @Override
-        public boolean hasChildren(Resource resource) {
-            // TODO Auto-generated method stub
-            return false;
-        }
 
         @Override
         public ResourceResolver clone(Map<String, Object> authenticationInfo) throws LoginException {
@@ -277,32 +266,6 @@ public class JacksonExporterLimitSerializationTest {
         public void refresh() {
             // TODO Auto-generated method stub
             
-        }
-
-        @Override
-        public Resource copy(String srcAbsPath, String destAbsPath) throws PersistenceException {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-        @Override
-        public Resource move(String srcAbsPath, String destAbsPath) throws PersistenceException {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-        @Override
-        public boolean orderBefore(@NotNull Resource parent, @NotNull String name,
-                @Nullable String followingSiblingName)
-                throws UnsupportedOperationException, PersistenceException, IllegalArgumentException {
-            // TODO Auto-generated method stub
-            return false;
-        }
-
-        @Override
-        public @NotNull Map<String, Object> getPropertyMap() {
-            // TODO Auto-generated method stub
-            return null;
         }
         
     }
