@@ -16,6 +16,9 @@
  */
 package org.apache.sling.models.jacksonexporter.impl;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.models.jacksonexporter.ModuleProvider;
 import org.osgi.service.component.annotations.Activate;
@@ -28,28 +31,43 @@ import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
 @Component(service = ModuleProvider.class)
-@Designate(ocd = ResourceResolverModuleProvider.Config.class)
-public class ResourceResolverModuleProvider implements ModuleProvider {
+@Designate(ocd = ConfigurableSerializationModuleProvider.Config.class)
+public class ConfigurableSerializationModuleProvider implements ModuleProvider {
     
-    @ObjectClassDefinition(name = "Apache Sling Models Jackson Exporter - ResourceResolver support",
-            description = "Provider of a Jackson Module which enables/disables support for serializing a ResourceResolver")
+    @ObjectClassDefinition(name = "Apache Sling Models Jackson Exporter - Serialization Blocker",
+            description = "Provider of a Jackson Module which can disable the serialization of classes")
     static @interface Config {
 
-        @AttributeDefinition(name ="disable serialization of the ResourceResolver",
-                description = "if enabled, ResourceResolver instances are not longer deserialized as JSON")
-        boolean disable_serialization() default false;
+        @AttributeDefinition(name ="disable serialization",
+                description = "provide a list of the full classnames which should not get serialized")
+        String[] disable_serialization() default {};
+        
+        @AttributeDefinition(name ="warn on serialization",
+                description = "provide a list of the full classnames for which a warning should be written when serialized")
+        String[] enable_warn_logging() default {ConfigurableSerializationModuleProvider.RESOURCERESOLVER};
+        
 
     }
+   
+    protected static final String RESOURCERESOLVER = "org.apache.sling.api.resource.ResourceResolver";
+    
     
     SimpleModule moduleInstance;
     
     
+   
+    
     @Activate
     private void activate(Config config) {
         this.moduleInstance = new SimpleModule();
-        if (config.disable_serialization()) {
+        
+        // Currently only the Sling ResourceResolver is supported to be disabled, other classes tbd.
+        List<String> disabled = Arrays.asList(config.disable_serialization());
+        List<String> logging = Arrays.asList(config.enable_warn_logging());
+        
+        if (disabled.contains(RESOURCERESOLVER)) {
             moduleInstance.setMixInAnnotation(ResourceResolver.class, IgnoringResourceResolverMixin.class);
-        } else {
+        } else if (logging.contains(RESOURCERESOLVER)) {
             moduleInstance.setMixInAnnotation(ResourceResolver.class, WarningResourceResolverMixin.class);
         }
     }

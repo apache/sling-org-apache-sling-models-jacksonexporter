@@ -57,7 +57,7 @@ class JacksonExporterLimitSerializationTest {
         
         PojoWithResourceResolver pojo = new PojoWithResourceResolver("text", new EmptyResourceResolver());
         
-        context.registerInjectActivateService(new ResourceResolverModuleProvider());
+        context.registerInjectActivateService(new ConfigurableSerializationModuleProvider());
         JacksonExporter underTest = context.registerInjectActivateService(JacksonExporter.class);
         Map<String,String> options = Collections.emptyMap();
 
@@ -76,8 +76,8 @@ class JacksonExporterLimitSerializationTest {
         LogCapture capture = new LogCapture(IgnoringResourceResolverMixin.class.getName(),false);        
         PojoWithResourceResolver pojo = new PojoWithResourceResolver("text",new EmptyResourceResolver());
         
-        Map<String,Object> config = Collections.singletonMap("disable.serialization", "true");
-        context.registerInjectActivateService(new ResourceResolverModuleProvider(),config);
+        Map<String,Object> config = Collections.singletonMap("disable.serialization", ResourceResolver.class.getName());
+        context.registerInjectActivateService(new ConfigurableSerializationModuleProvider(),config);
         
         
         JacksonExporter underTest = context.registerInjectActivateService(JacksonExporter.class);
