@@ -23,7 +23,7 @@ import org.apache.sling.api.resource.ResourceResolver;
 import com.fasterxml.jackson.annotation.JsonIgnoreType;
 
 /**
- * This mixin disables the serialization of the ResourceResolver; if it's still requested, a ERROR log message is written.
+ * This mixin disables the serialization of the ResourceResolver.
  *
  */
 
