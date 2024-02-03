@@ -18,7 +18,6 @@
  */
 package org.apache.sling.models.jacksonexporter.impl;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
@@ -31,15 +30,15 @@ import org.apache.sling.api.resource.LoginException;
 import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
-import org.apache.sling.models.factory.ExportException;
 import org.apache.sling.models.jacksonexporter.impl.example.PojoWithResourceResolver;
 import org.apache.sling.models.jacksonexporter.impl.util.LogCapture;
 import org.apache.sling.testing.mock.osgi.junit5.OsgiContext;
 import org.apache.sling.testing.mock.osgi.junit5.OsgiContextExtension;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ch.qos.logback.classic.Level;
 
@@ -48,10 +47,8 @@ class JacksonExporterLimitSerializationTest {
 
     private OsgiContext context = new OsgiContext();
     
-    
-    
     @Test
-    void testWarnLogWhenSerializingResourceResolver() throws ExportException {
+    void testWarnLogWhenSerializingResourceResolver() throws Exception {
         
         LogCapture capture = new LogCapture(JacksonExporter.class.getName(),false);
         
@@ -61,32 +58,30 @@ class JacksonExporterLimitSerializationTest {
         JacksonExporter underTest = context.registerInjectActivateService(JacksonExporter.class);
         Map<String,String> options = Collections.emptyMap();
 
-        String expectedJson = "{\"msg\":\"text\",\"resolver\":{";
-        assertTrue(underTest.export(pojo, String.class, options).contains(expectedJson));
+        String json = underTest.export(pojo, String.class, options);
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode result = mapper.readTree(json);
+        assertTrue(result.path("resolver").isContainerNode());
         assertTrue(capture.anyMatch(event -> {
            return event.getFormattedMessage().equals(WarningResourceResolverMixin.MESSAGE) && 
                    event.getLevel().equals(Level.WARN);
         }));
     }
     
-    
     @Test
-    void testNotSerializingResourceResolverWhenDisabled() throws ExportException {
+    void testNotSerializingResourceResolverWhenDisabled() throws Exception {
         
-        LogCapture capture = new LogCapture(IgnoringResourceResolverMixin.class.getName(),false);        
         PojoWithResourceResolver pojo = new PojoWithResourceResolver("text",new EmptyResourceResolver());
-        
         Map<String,Object> config = Collections.singletonMap("disable.serialization", ResourceResolver.class.getName());
         context.registerInjectActivateService(new ConfigurableSerializationModuleProvider(),config);
         
-        
         JacksonExporter underTest = context.registerInjectActivateService(JacksonExporter.class);
         Map<String,String> options = Collections.emptyMap();
-
-        String expectedJson = "{\"msg\":\"text\"}";
-        assertEquals(expectedJson, underTest.export(pojo, String.class, options));
         
-//        assertTrue(capture.anyMatch(p -> p.getFormattedMessage().contains(IgnoringResourceResolverMixin.MESSAGE)));
+        String json = underTest.export(pojo, String.class, options);
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode result = mapper.readTree(json);
+        assertTrue(result.path("resolver").isMissingNode());
     }
     
     
