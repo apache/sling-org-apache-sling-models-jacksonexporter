@@ -41,6 +41,7 @@
     <properties>
         <sling.java.version>8</sling.java.version>
         <project.build.outputTimestamp>2023-07-13T09:44:49Z</project.build.outputTimestamp>
+        <version.jackson>2.13.5</version.jackson>
     </properties>
 
     <dependencies>
@@ -112,19 +113,19 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.13.5</version>
+            <version>${version.jackson}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
-            <version>2.16.1</version>
+            <version>${version.jackson}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
-            <version>2.16.1</version>
+            <version>${version.jackson}</version>
             <scope>provided</scope>
         </dependency>
 
