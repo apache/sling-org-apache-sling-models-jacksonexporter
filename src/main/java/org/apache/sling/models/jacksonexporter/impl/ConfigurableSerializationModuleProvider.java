@@ -70,16 +70,16 @@ public class ConfigurableSerializationModuleProvider implements ModuleProvider {
             if (RESOURCERESOLVER.equals(type)) {
                 moduleInstance.setMixInAnnotation(ResourceResolver.class, IgnoringResourceResolverMixin.class);
                 ignoringRR = true;
-                LOG.info("Not serializing the RR");
             } else {
                 LOG.warn("Support to disable the serialization of type {} is not implemented", type);
             }
         }
         
         for (String type: logging) {
-            if (RESOURCERESOLVER.equals(type) && !ignoringRR) {
-                moduleInstance.setMixInAnnotation(ResourceResolver.class, WarningResourceResolverMixin.class);
-                LOG.info("Logging the RR");
+            if (RESOURCERESOLVER.equals(type)) {
+                if (!ignoringRR) {
+                    moduleInstance.setMixInAnnotation(ResourceResolver.class, WarningResourceResolverMixin.class);
+                }
             } else {
                 LOG.warn("Support to log any serialization of type {} is not implemented", type);
             }
