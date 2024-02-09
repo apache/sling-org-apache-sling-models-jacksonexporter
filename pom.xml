@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.apache.sling</groupId>
         <artifactId>sling-bundle-parent</artifactId>
-        <version>49</version>
+        <version>52</version>
         <relativePath />
     </parent>
 
@@ -41,6 +41,7 @@
     <properties>
         <sling.java.version>8</sling.java.version>
         <project.build.outputTimestamp>2023-07-13T09:44:49Z</project.build.outputTimestamp>
+        <version.jackson>2.13.5</version.jackson>
     </properties>
 
     <dependencies>
@@ -112,19 +113,19 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.3.2</version>
+            <version>${version.jackson}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
-            <version>2.3.2</version>
+            <version>${version.jackson}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
-            <version>2.3.2</version>
+            <version>${version.jackson}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -147,13 +148,13 @@
         <dependency>
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.testing.osgi-mock.junit5</artifactId>
-            <version>3.2.0</version>
+            <version>3.4.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.testing.sling-mock.junit5</artifactId>
-            <version>3.2.0</version>
+            <version>3.4.16</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -170,7 +171,7 @@
         <dependency>
           <groupId>org.junit</groupId>
           <artifactId>junit-bom</artifactId>
-          <version>5.8.2</version>
+          <version>5.10.1</version>
           <type>pom</type>
           <scope>import</scope>
         </dependency>
