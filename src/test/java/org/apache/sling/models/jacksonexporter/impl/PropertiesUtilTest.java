@@ -18,14 +18,14 @@
  */
 package org.apache.sling.models.jacksonexporter.impl;
 
-import static org.apache.sling.models.jacksonexporter.impl.PropertiesUtil.toMap;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
+
+import static org.apache.sling.models.jacksonexporter.impl.PropertiesUtil.toMap;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class PropertiesUtilTest {
 
@@ -37,21 +37,14 @@ class PropertiesUtilTest {
     @Test
     void testToMap_VariousEntries() {
         String[] input = new String[] {
-          "prop1=value1",
-          "  prop.2  =  value.2 ",
-          "prop3=",
-          "prop4",
-          "",
-          null,
-          "prop5=value5a=value5b"
+            "prop1=value1", "  prop.2  =  value.2 ", "prop3=", "prop4", "", null, "prop5=value5a=value5b"
         };
 
-        Map<String,String> expectedOutput = new LinkedHashMap<>();
+        Map<String, String> expectedOutput = new LinkedHashMap<>();
         expectedOutput.put("prop1", "value1");
         expectedOutput.put("prop.2", "value.2");
         expectedOutput.put("prop5", "value5a=value5b");
 
         assertEquals(expectedOutput, toMap(input));
     }
-
 }

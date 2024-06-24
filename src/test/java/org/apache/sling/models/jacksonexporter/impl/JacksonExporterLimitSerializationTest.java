@@ -18,16 +18,16 @@
  */
 package org.apache.sling.models.jacksonexporter.impl;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import javax.servlet.http.HttpServletRequest;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
+import ch.qos.logback.classic.Level;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.sling.api.resource.LoginException;
 import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
@@ -40,77 +40,76 @@ import org.apache.sling.testing.mock.osgi.junit5.OsgiContextExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import ch.qos.logback.classic.Level;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(OsgiContextExtension.class)
 class JacksonExporterLimitSerializationTest {
 
     private OsgiContext context = new OsgiContext();
-    
+
     @Test
     void testWarnLogWhenSerializingResourceResolver() throws Exception {
-        
-        LogCapture capture = new LogCapture(JacksonExporter.class.getName(),false);
-        
+
+        LogCapture capture = new LogCapture(JacksonExporter.class.getName(), false);
+
         PojoWithResourceResolver pojo = new PojoWithResourceResolver("text", new EmptyResourceResolver());
-        
+
         context.registerInjectActivateService(new ConfigurableSerializationModuleProvider());
         JacksonExporter underTest = context.registerInjectActivateService(JacksonExporter.class);
-        Map<String,String> options = Collections.emptyMap();
+        Map<String, String> options = Collections.emptyMap();
 
         String json = underTest.export(pojo, String.class, options);
         ObjectMapper mapper = new ObjectMapper();
         JsonNode result = mapper.readTree(json);
         assertTrue(result.path("resolver").isContainerNode());
         assertTrue(capture.anyMatch(event -> {
-           return event.getFormattedMessage().equals(WarningResourceResolverMixin.MESSAGE) && 
-                   event.getLevel().equals(Level.WARN);
+            return event.getFormattedMessage().equals(WarningResourceResolverMixin.MESSAGE)
+                    && event.getLevel().equals(Level.WARN);
         }));
     }
-    
+
     @Test
     void testNotSerializingResourceResolverWhenDisabled() throws Exception {
-        
-        LogCapture capture = new LogCapture(ConfigurableSerializationModuleProvider.class.getName(),false);
-        
-        PojoWithResourceResolver pojo = new PojoWithResourceResolver("text",new EmptyResourceResolver());
-        Map<String,Object> config = Collections.singletonMap("disable.serialization", ResourceResolver.class.getName());
-        context.registerInjectActivateService(new ConfigurableSerializationModuleProvider(),config);
-        
+
+        LogCapture capture = new LogCapture(ConfigurableSerializationModuleProvider.class.getName(), false);
+
+        PojoWithResourceResolver pojo = new PojoWithResourceResolver("text", new EmptyResourceResolver());
+        Map<String, Object> config =
+                Collections.singletonMap("disable.serialization", ResourceResolver.class.getName());
+        context.registerInjectActivateService(new ConfigurableSerializationModuleProvider(), config);
+
         JacksonExporter underTest = context.registerInjectActivateService(JacksonExporter.class);
-        Map<String,String> options = Collections.emptyMap();
+        Map<String, String> options = Collections.emptyMap();
 
         String expectedJson = "{\"msg\":\"text\"}";
         assertEquals(expectedJson, underTest.export(pojo, String.class, options));
         // no log is written in this case
-        assertEquals(0,capture.list.size());
+        assertEquals(0, capture.list.size());
     }
-    
-    
+
     @Test
     void test_givenInvalidTypes_whenActivate_thenWarnLogStatements() throws ExportException {
-        LogCapture capture = new LogCapture(ConfigurableSerializationModuleProvider.class.getName(),false);
-        
-        Map<String,Object> config = new HashMap<>();
+        LogCapture capture = new LogCapture(ConfigurableSerializationModuleProvider.class.getName(), false);
+
+        Map<String, Object> config = new HashMap<>();
         config.put("disable.serialization", "foo.bar.disable");
         config.put("enable.warn.logging", "foo.bar.logging");
-        
-        context.registerInjectActivateService(new ConfigurableSerializationModuleProvider(),config);
+
+        context.registerInjectActivateService(new ConfigurableSerializationModuleProvider(), config);
 
         assertTrue(capture.anyMatch(event -> {
-           return event.getFormattedMessage().equals("Support to disable the serialization of type foo.bar.disable is not implemented") && 
-                   event.getLevel().equals(Level.WARN);
+            return event.getFormattedMessage()
+                            .equals("Support to disable the serialization of type foo.bar.disable is not implemented")
+                    && event.getLevel().equals(Level.WARN);
         }));
         assertTrue(capture.anyMatch(event -> {
-            return event.getFormattedMessage().equals("Support to log any serialization of type foo.bar.logging is not implemented") && 
-                    event.getLevel().equals(Level.WARN);
-         }));
+            return event.getFormattedMessage()
+                            .equals("Support to log any serialization of type foo.bar.logging is not implemented")
+                    && event.getLevel().equals(Level.WARN);
+        }));
     }
-    
-    
+
     /**
      * A very simple ResourceResolver implementation which does not lead to any issues with any mocking framework
      * when trying to export it with Jackson.
@@ -181,7 +180,6 @@ class JacksonExporterLimitSerializationTest {
         public Iterator<Map<String, Object>> queryResources(String query, String language) {
             return null;
         }
-
 
         @Override
         public ResourceResolver clone(Map<String, Object> authenticationInfo) throws LoginException {

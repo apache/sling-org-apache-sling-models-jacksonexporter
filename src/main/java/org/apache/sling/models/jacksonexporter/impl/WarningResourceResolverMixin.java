@@ -20,53 +20,40 @@ package org.apache.sling.models.jacksonexporter.impl;
 
 import java.io.IOException;
 
-import org.apache.sling.api.resource.ResourceResolver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
+import org.apache.sling.api.resource.ResourceResolver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This mixin exports data which Jackson would export by default (so not change in the default behaviour),
  * but prints a warning whenever it does that.
  */
-
-
 @JsonAutoDetect
 public interface WarningResourceResolverMixin extends ResourceResolver {
-    
+
     public static final String MESSAGE = "A ResourceResolver is serialized with all its private fields containing "
             + "implementation details you should not disclose. Please review your Sling Model implementation(s) and remove "
             + "all public accessors to a ResourceResolver.";
-    
+
     public static final Logger LOG = LoggerFactory.getLogger(JacksonExporter.class);
-    
-    
 
     // This method is explicitly mentioned so we provide a custom serializer which prints the warning
-    
+
     @Override
-    @JsonSerialize(using=WarningBooleanSerializer.class)
+    @JsonSerialize(using = WarningBooleanSerializer.class)
     boolean isLive();
-    
-    
-    
+
     public class WarningBooleanSerializer extends JsonSerializer<Boolean> {
 
         @Override
-        public void serialize(Boolean value, JsonGenerator jgen, SerializerProvider provider)
-                throws IOException {
+        public void serialize(Boolean value, JsonGenerator jgen, SerializerProvider provider) throws IOException {
             LOG.warn(MESSAGE);
             jgen.writeObject(value);
-            
         }
-        
     }
-    
-    
 }
