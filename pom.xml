@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.apache.sling</groupId>
         <artifactId>sling-bundle-parent</artifactId>
-        <version>49</version>
+        <version>60</version>
         <relativePath />
     </parent>
 
@@ -39,7 +39,6 @@
   </scm>
 
     <properties>
-        <sling.java.version>8</sling.java.version>
         <project.build.outputTimestamp>2023-07-13T09:44:49Z</project.build.outputTimestamp>
     </properties>
 
