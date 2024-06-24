@@ -46,7 +46,7 @@ final class PropertiesUtil {
      * @return Map value
      */
     static Map<String, String> toMap(String @NotNull [] stringArray) {
-        //in property values
+        // in property values
         Map<String, String> result = new LinkedHashMap<>();
         for (String kv : stringArray) {
             if (kv == null) {
@@ -63,5 +63,4 @@ final class PropertiesUtil {
         }
         return result;
     }
-
 }

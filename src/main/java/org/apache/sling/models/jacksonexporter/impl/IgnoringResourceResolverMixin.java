@@ -18,21 +18,17 @@
  */
 package org.apache.sling.models.jacksonexporter.impl;
 
-import org.apache.sling.api.resource.ResourceResolver;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreType;
+import org.apache.sling.api.resource.ResourceResolver;
 
 /**
  * This mixin disables the serialization of the ResourceResolver.
  *
  */
-
 @JsonIgnoreType
 public abstract interface IgnoringResourceResolverMixin extends ResourceResolver {
 
-    
     /**
      * TODO: find a way how we can both ignore this type and write a warning when trying to serialize a ResourceResolver.
-     */    
-    
+     */
 }

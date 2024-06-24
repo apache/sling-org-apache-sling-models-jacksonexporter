@@ -24,6 +24,13 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.SerializableString;
+import com.fasterxml.jackson.core.io.CharacterEscapes;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.sling.models.export.spi.ModelExporter;
 import org.apache.sling.models.factory.ExportException;
 import org.apache.sling.models.jacksonexporter.ModuleProvider;
@@ -39,14 +46,6 @@ import org.osgi.service.metatype.annotations.ObjectClassDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.SerializableString;
-import com.fasterxml.jackson.core.io.CharacterEscapes;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-
 @Component(service = ModelExporter.class)
 @Designate(ocd = JacksonExporter.Config.class)
 public class JacksonExporter implements ModelExporter {
@@ -61,20 +60,24 @@ public class JacksonExporter implements ModelExporter {
 
     private static final int MAPPER_FEATURE_PREFIX_LENGTH = MAPPER_FEATURE_PREFIX.length();
 
-    @ObjectClassDefinition(name = "Apache Sling Models Jackson Exporter",
+    @ObjectClassDefinition(
+            name = "Apache Sling Models Jackson Exporter",
             description = "Configures the Jackson JSON Exporter for Sling Models.")
     static @interface Config {
 
-        @AttributeDefinition(name ="Mapping options",
-                description = "Mapping options to override default Jackson settings. "
-                    + "Mapping options that are passed via request parameters have higher precedence. "
-                    + "Example: SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS=true, MapperFeature.SORT_PROPERTIES_ALPHABETICALLY=true")
+        @AttributeDefinition(
+                name = "Mapping options",
+                description =
+                        "Mapping options to override default Jackson settings. "
+                                + "Mapping options that are passed via request parameters have higher precedence. "
+                                + "Example: SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS=true, MapperFeature.SORT_PROPERTIES_ALPHABETICALLY=true")
         String[] mapping_options();
-
     }
 
-    @Reference(service = ModuleProvider.class,
-            cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
+    @Reference(
+            service = ModuleProvider.class,
+            cardinality = ReferenceCardinality.MULTIPLE,
+            policy = ReferencePolicy.DYNAMIC)
     private volatile Collection<ModuleProvider> moduleProviders;
 
     private Map<String, String> mappingOptions;
@@ -85,11 +88,11 @@ public class JacksonExporter implements ModelExporter {
     }
 
     @Override
-    @SuppressWarnings({ "null", "unchecked" })
+    @SuppressWarnings({"null", "unchecked"})
     public <T> T export(@NotNull Object model, @NotNull Class<T> clazz, @NotNull Map<String, String> options)
             throws ExportException {
         ObjectMapper mapper = new ObjectMapper();
-        Map<String,String> mergedOptions = mergeWithConfiguredOptions(options);
+        Map<String, String> mergedOptions = mergeWithConfiguredOptions(options);
         for (Map.Entry<String, String> optionEntry : mergedOptions.entrySet()) {
             String key = optionEntry.getKey();
             if (key.startsWith(SERIALIZATION_FEATURE_PREFIX)) {
@@ -143,8 +146,8 @@ public class JacksonExporter implements ModelExporter {
         }
     }
 
-    private Map<String,String> mergeWithConfiguredOptions(@NotNull Map<String, String> options) {
-        Map<String,String> mergedMap = new LinkedHashMap<>();
+    private Map<String, String> mergeWithConfiguredOptions(@NotNull Map<String, String> options) {
+        Map<String, String> mergedMap = new LinkedHashMap<>();
         mergedMap.putAll(mappingOptions);
         mergedMap.putAll(options);
         return mergedMap;
@@ -182,5 +185,4 @@ public class JacksonExporter implements ModelExporter {
             return null;
         }
     }
-
 }

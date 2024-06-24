@@ -21,16 +21,12 @@ package org.apache.sling.models.jacksonexporter.impl.example;
 import org.apache.sling.api.resource.ResourceResolver;
 
 public class PojoWithResourceResolver {
-    
-    
+
     public String msg;
     public ResourceResolver resolver;
-    
-    public PojoWithResourceResolver (String msg, ResourceResolver resolver) {
+
+    public PojoWithResourceResolver(String msg, ResourceResolver resolver) {
         this.msg = msg;
         this.resolver = resolver;
     }
-    
-    
-
 }
