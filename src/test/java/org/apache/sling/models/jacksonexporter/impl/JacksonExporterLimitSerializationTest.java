@@ -21,10 +21,13 @@ package org.apache.sling.models.jacksonexporter.impl;
 import javax.servlet.http.HttpServletRequest;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 import ch.qos.logback.classic.Level;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.sling.api.resource.LoginException;
 import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
@@ -46,7 +49,7 @@ class JacksonExporterLimitSerializationTest {
     private OsgiContext context = new OsgiContext();
 
     @Test
-    void testWarnLogWhenSerializingResourceResolver() throws ExportException {
+    void testWarnLogWhenSerializingResourceResolver() throws Exception {
 
         LogCapture capture = new LogCapture(JacksonExporter.class.getName(), false);
 
@@ -56,8 +59,10 @@ class JacksonExporterLimitSerializationTest {
         JacksonExporter underTest = context.registerInjectActivateService(JacksonExporter.class);
         Map<String, String> options = Collections.emptyMap();
 
-        String expectedJson = "{\"msg\":\"text\",\"resolver\":{";
-        assertTrue(underTest.export(pojo, String.class, options).contains(expectedJson));
+        String json = underTest.export(pojo, String.class, options);
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode result = mapper.readTree(json);
+        assertTrue(result.path("resolver").isContainerNode());
         assertTrue(capture.anyMatch(event -> {
             return event.getFormattedMessage().equals(WarningResourceResolverMixin.MESSAGE)
                     && event.getLevel().equals(Level.WARN);
@@ -65,11 +70,11 @@ class JacksonExporterLimitSerializationTest {
     }
 
     @Test
-    void testNotSerializingResourceResolverWhenDisabled() throws ExportException {
+    void testNotSerializingResourceResolverWhenDisabled() throws Exception {
 
-        LogCapture capture = new LogCapture(IgnoringResourceResolverMixin.class.getName(), false);
+        LogCapture capture = new LogCapture(ConfigurableSerializationModuleProvider.class.getName(), false);
+
         PojoWithResourceResolver pojo = new PojoWithResourceResolver("text", new EmptyResourceResolver());
-
         Map<String, Object> config =
                 Collections.singletonMap("disable.serialization", ResourceResolver.class.getName());
         context.registerInjectActivateService(new ConfigurableSerializationModuleProvider(), config);
@@ -79,9 +84,30 @@ class JacksonExporterLimitSerializationTest {
 
         String expectedJson = "{\"msg\":\"text\"}";
         assertEquals(expectedJson, underTest.export(pojo, String.class, options));
+        // no log is written in this case
+        assertEquals(0, capture.list.size());
+    }
 
-        //        assertTrue(capture.anyMatch(p ->
-        // p.getFormattedMessage().contains(IgnoringResourceResolverMixin.MESSAGE)));
+    @Test
+    void test_givenInvalidTypes_whenActivate_thenWarnLogStatements() throws ExportException {
+        LogCapture capture = new LogCapture(ConfigurableSerializationModuleProvider.class.getName(), false);
+
+        Map<String, Object> config = new HashMap<>();
+        config.put("disable.serialization", "foo.bar.disable");
+        config.put("enable.warn.logging", "foo.bar.logging");
+
+        context.registerInjectActivateService(new ConfigurableSerializationModuleProvider(), config);
+
+        assertTrue(capture.anyMatch(event -> {
+            return event.getFormattedMessage()
+                            .equals("Support to disable the serialization of type foo.bar.disable is not implemented")
+                    && event.getLevel().equals(Level.WARN);
+        }));
+        assertTrue(capture.anyMatch(event -> {
+            return event.getFormattedMessage()
+                            .equals("Support to log any serialization of type foo.bar.logging is not implemented")
+                    && event.getLevel().equals(Level.WARN);
+        }));
     }
 
     /**
@@ -90,176 +116,145 @@ class JacksonExporterLimitSerializationTest {
      */
     public class EmptyResourceResolver implements ResourceResolver {
 
-        //        public static final String SERIALIZED_STRING =
-        // "\"resolver\":{\"live\":false,\"userID\":null,\"searchPath\":null,\"propertyMap\":null,\"userID\":false}";
-
         @Override
         public <AdapterType> AdapterType adaptTo(Class<AdapterType> type) {
-            // TODO Auto-generated method stub
             return null;
         }
 
         @Override
         public Resource resolve(HttpServletRequest request, String absPath) {
-            // TODO Auto-generated method stub
             return null;
         }
 
         @Override
         public Resource resolve(String absPath) {
-            // TODO Auto-generated method stub
             return null;
         }
 
         @Override
         public Resource resolve(HttpServletRequest request) {
-            // TODO Auto-generated method stub
             return null;
         }
 
         @Override
         public String map(String resourcePath) {
-            // TODO Auto-generated method stub
             return null;
         }
 
         @Override
         public String map(HttpServletRequest request, String resourcePath) {
-            // TODO Auto-generated method stub
             return null;
         }
 
         @Override
         public Resource getResource(String path) {
-            // TODO Auto-generated method stub
             return null;
         }
 
         @Override
         public Resource getResource(Resource base, String path) {
-            // TODO Auto-generated method stub
             return null;
         }
 
         @Override
         public String[] getSearchPath() {
-            // TODO Auto-generated method stub
             return null;
         }
 
         @Override
         public Iterator<Resource> listChildren(Resource parent) {
-            // TODO Auto-generated method stub
             return null;
         }
 
         @Override
         public Iterable<Resource> getChildren(Resource parent) {
-            // TODO Auto-generated method stub
             return null;
         }
 
         @Override
         public Iterator<Resource> findResources(String query, String language) {
-            // TODO Auto-generated method stub
             return null;
         }
 
         @Override
         public Iterator<Map<String, Object>> queryResources(String query, String language) {
-            // TODO Auto-generated method stub
             return null;
         }
 
         @Override
         public ResourceResolver clone(Map<String, Object> authenticationInfo) throws LoginException {
-            // TODO Auto-generated method stub
             return null;
         }
 
         @Override
         public boolean isLive() {
-            // TODO Auto-generated method stub
             return false;
         }
 
         @Override
         public void close() {
-            // TODO Auto-generated method stub
-
+            // do nothing
         }
 
         @Override
         public String getUserID() {
-            // TODO Auto-generated method stub
             return null;
         }
 
         @Override
         public Iterator<String> getAttributeNames() {
-            // TODO Auto-generated method stub
             return null;
         }
 
         @Override
         public Object getAttribute(String name) {
-            // TODO Auto-generated method stub
             return null;
         }
 
         @Override
         public void delete(Resource resource) throws PersistenceException {
-            // TODO Auto-generated method stub
-
+            // do nothing
         }
 
         @Override
         public Resource create(Resource parent, String name, Map<String, Object> properties)
                 throws PersistenceException {
-            // TODO Auto-generated method stub
             return null;
         }
 
         @Override
         public void revert() {
-            // TODO Auto-generated method stub
-
+            // do nothing
         }
 
         @Override
         public void commit() throws PersistenceException {
-            // TODO Auto-generated method stub
-
+            // do nothing
         }
 
         @Override
         public boolean hasChanges() {
-            // TODO Auto-generated method stub
             return false;
         }
 
         @Override
         public String getParentResourceType(Resource resource) {
-            // TODO Auto-generated method stub
             return null;
         }
 
         @Override
         public String getParentResourceType(String resourceType) {
-            // TODO Auto-generated method stub
             return null;
         }
 
         @Override
         public boolean isResourceType(Resource resource, String resourceType) {
-            // TODO Auto-generated method stub
             return false;
         }
 
         @Override
         public void refresh() {
-            // TODO Auto-generated method stub
-
+            // do nothing
         }
     }
 }

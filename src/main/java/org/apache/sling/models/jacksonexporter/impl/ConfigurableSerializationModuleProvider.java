@@ -30,6 +30,8 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.metatype.annotations.AttributeDefinition;
 import org.osgi.service.metatype.annotations.Designate;
 import org.osgi.service.metatype.annotations.ObjectClassDefinition;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component(service = ModuleProvider.class)
 @Designate(ocd = ConfigurableSerializationModuleProvider.Config.class)
@@ -42,17 +44,22 @@ public class ConfigurableSerializationModuleProvider implements ModuleProvider {
 
         @AttributeDefinition(
                 name = "disable serialization",
-                description = "provide a list of the full classnames which should not get serialized")
+                description = "provide a list of the full classnames which should not get serialized; currently only \""
+                        + RESOURCERESOLVER + "\" is supported")
         String[] disable_serialization() default {};
 
         @AttributeDefinition(
                 name = "warn on serialization",
                 description =
-                        "provide a list of the full classnames for which a warning should be written when serialized")
+                        "provide a list of the full classnames for which a warning should be written when serialized; currently only \""
+                                + RESOURCERESOLVER + "\" is supported")
         String[] enable_warn_logging() default {ConfigurableSerializationModuleProvider.RESOURCERESOLVER};
     }
 
+    private static final Logger LOG = LoggerFactory.getLogger(ConfigurableSerializationModuleProvider.class);
     protected static final String RESOURCERESOLVER = "org.apache.sling.api.resource.ResourceResolver";
+
+    boolean ignoringRR = false;
 
     SimpleModule moduleInstance;
 
@@ -60,14 +67,27 @@ public class ConfigurableSerializationModuleProvider implements ModuleProvider {
     private void activate(Config config) {
         this.moduleInstance = new SimpleModule();
 
-        // Currently only the Sling ResourceResolver is supported to be disabled, other classes tbd.
         List<String> disabled = Arrays.asList(config.disable_serialization());
         List<String> logging = Arrays.asList(config.enable_warn_logging());
 
-        if (disabled.contains(RESOURCERESOLVER)) {
-            moduleInstance.setMixInAnnotation(ResourceResolver.class, IgnoringResourceResolverMixin.class);
-        } else if (logging.contains(RESOURCERESOLVER)) {
-            moduleInstance.setMixInAnnotation(ResourceResolver.class, WarningResourceResolverMixin.class);
+        // Currently only the Sling ResourceResolver is supported
+        for (String type : disabled) {
+            if (RESOURCERESOLVER.equals(type)) {
+                moduleInstance.setMixInAnnotation(ResourceResolver.class, IgnoringResourceResolverMixin.class);
+                ignoringRR = true;
+            } else {
+                LOG.warn("Support to disable the serialization of type {} is not implemented", type);
+            }
+        }
+
+        for (String type : logging) {
+            if (RESOURCERESOLVER.equals(type)) {
+                if (!ignoringRR) {
+                    moduleInstance.setMixInAnnotation(ResourceResolver.class, WarningResourceResolverMixin.class);
+                }
+            } else {
+                LOG.warn("Support to log any serialization of type {} is not implemented", type);
+            }
         }
     }
 
