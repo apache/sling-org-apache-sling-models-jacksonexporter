@@ -18,21 +18,20 @@
  */
 package org.apache.sling.models.jacksonexporter.impl.util;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.function.Predicate;
-
-import org.slf4j.LoggerFactory;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
+import org.slf4j.LoggerFactory;
 
-public class LogCapture  extends ListAppender<ILoggingEvent> implements Closeable {
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+public class LogCapture extends ListAppender<ILoggingEvent> implements Closeable {
     private final boolean verboseFailure;
 
     /** Setup the capture and start it */
@@ -54,16 +53,9 @@ public class LogCapture  extends ListAppender<ILoggingEvent> implements Closeabl
             return event.getFormattedMessage().equals(message);
         }));
     }
-    
-    
-    
-    
 
     @Override
     public void close() throws IOException {
         stop();
     }
-    
-    
-    
 }

@@ -18,8 +18,6 @@
  */
 package org.apache.sling.models.jacksonexporter.impl;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import java.util.Collections;
 import java.util.Map;
 
@@ -30,6 +28,8 @@ import org.apache.sling.testing.mock.osgi.junit5.OsgiContextExtension;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Tests passing in and configuring mapping options for {@link JacksonExporter}.
@@ -43,16 +43,13 @@ class JacksonExporterMappingOptionsTest {
 
     @BeforeEach
     void setUp() {
-        pojoWithData = new ExamplePojo()
-                .stringProp("value1")
-                .numberProp(1)
-                .booleanProp(true);
+        pojoWithData = new ExamplePojo().stringProp("value1").numberProp(1).booleanProp(true);
     }
 
     @Test
     void testDefaultConfig() throws ExportException {
         JacksonExporter underTest = context.registerInjectActivateService(JacksonExporter.class);
-        Map<String,String> options = Collections.emptyMap();
+        Map<String, String> options = Collections.emptyMap();
 
         String expectedJson = "{\"stringProp\":\"value1\",\"numberProp\":1,\"booleanProp\":true}";
         assertEquals(expectedJson, underTest.export(pojoWithData, String.class, options));
@@ -61,7 +58,7 @@ class JacksonExporterMappingOptionsTest {
     @Test
     void testPassedInOptions() throws ExportException {
         JacksonExporter underTest = context.registerInjectActivateService(JacksonExporter.class);
-        Map<String,String> options = Collections.singletonMap("MapperFeature.SORT_PROPERTIES_ALPHABETICALLY", "true");
+        Map<String, String> options = Collections.singletonMap("MapperFeature.SORT_PROPERTIES_ALPHABETICALLY", "true");
 
         String expectedJson = "{\"booleanProp\":true,\"numberProp\":1,\"stringProp\":\"value1\"}";
         assertEquals(expectedJson, underTest.export(pojoWithData, String.class, options));
@@ -69,9 +66,11 @@ class JacksonExporterMappingOptionsTest {
 
     @Test
     void testConfiguredOptions() throws ExportException {
-        JacksonExporter underTest = context.registerInjectActivateService(JacksonExporter.class,
-                "mapping.options", new String[] { "MapperFeature.SORT_PROPERTIES_ALPHABETICALLY=true" });
-        Map<String,String> options = Collections.emptyMap();
+        JacksonExporter underTest =
+                context.registerInjectActivateService(JacksonExporter.class, "mapping.options", new String[] {
+                    "MapperFeature.SORT_PROPERTIES_ALPHABETICALLY=true"
+                });
+        Map<String, String> options = Collections.emptyMap();
 
         String expectedJson = "{\"booleanProp\":true,\"numberProp\":1,\"stringProp\":\"value1\"}";
         assertEquals(expectedJson, underTest.export(pojoWithData, String.class, options));
@@ -79,12 +78,13 @@ class JacksonExporterMappingOptionsTest {
 
     @Test
     void testPassedInOptionsOverlayConfiguredOptions() throws ExportException {
-        JacksonExporter underTest = context.registerInjectActivateService(JacksonExporter.class,
-                "mapping.options", new String[] { "MapperFeature.SORT_PROPERTIES_ALPHABETICALLY=true" });
-        Map<String,String> options = Collections.singletonMap("MapperFeature.SORT_PROPERTIES_ALPHABETICALLY", "false");
+        JacksonExporter underTest =
+                context.registerInjectActivateService(JacksonExporter.class, "mapping.options", new String[] {
+                    "MapperFeature.SORT_PROPERTIES_ALPHABETICALLY=true"
+                });
+        Map<String, String> options = Collections.singletonMap("MapperFeature.SORT_PROPERTIES_ALPHABETICALLY", "false");
 
         String expectedJson = "{\"stringProp\":\"value1\",\"numberProp\":1,\"booleanProp\":true}";
         assertEquals(expectedJson, underTest.export(pojoWithData, String.class, options));
     }
-
 }

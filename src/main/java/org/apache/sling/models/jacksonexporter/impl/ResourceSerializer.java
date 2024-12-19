@@ -1,18 +1,20 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.apache.sling.models.jacksonexporter.impl;
 
@@ -23,14 +25,13 @@ import java.util.Calendar;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.apache.sling.api.resource.Resource;
-import org.apache.sling.api.resource.ValueMap;
-
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.ResolvableSerializer;
+import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ValueMap;
 
 public class ResourceSerializer extends JsonSerializer<Resource> implements ResolvableSerializer {
 
@@ -42,14 +43,19 @@ public class ResourceSerializer extends JsonSerializer<Resource> implements Reso
     }
 
     @Override
-    public void serialize(final Resource value, final JsonGenerator jgen, final SerializerProvider provider) throws IOException {
+    public void serialize(final Resource value, final JsonGenerator jgen, final SerializerProvider provider)
+            throws IOException {
         create(value, jgen, 0, provider);
     }
 
     /** Dump given resource in JSON, optionally recursing into its objects */
-    @SuppressWarnings({ "unused", "null" })
-    private void create(final Resource resource, final JsonGenerator jgen, final int currentRecursionLevel,
-                                     final SerializerProvider provider) throws IOException {
+    @SuppressWarnings({"unused", "null"})
+    private void create(
+            final Resource resource,
+            final JsonGenerator jgen,
+            final int currentRecursionLevel,
+            final SerializerProvider provider)
+            throws IOException {
         jgen.writeStartObject();
 
         final ValueMap valueMap = resource.adaptTo(ValueMap.class);
@@ -76,7 +82,6 @@ public class ResourceSerializer extends JsonSerializer<Resource> implements Reso
                     }
                     jgen.writeEndArray();
                 }
-
             }
 
         } else {
@@ -109,37 +114,40 @@ public class ResourceSerializer extends JsonSerializer<Resource> implements Reso
      * Write a single property
      */
     @SuppressWarnings("null")
-    private void createProperty(final JsonGenerator jgen, final ValueMap valueMap, final String key, final Object value,
-                                final SerializerProvider provider)
+    private void createProperty(
+            final JsonGenerator jgen,
+            final ValueMap valueMap,
+            final String key,
+            final Object value,
+            final SerializerProvider provider)
             throws IOException {
         Object[] values = null;
         if (value.getClass().isArray()) {
             final int length = Array.getLength(value);
             // write out empty array
-            if ( length == 0 ) {
+            if (length == 0) {
                 jgen.writeArrayFieldStart(key);
                 jgen.writeEndArray();
                 return;
             }
             values = new Object[Array.getLength(value)];
-            for(int i=0; i<length; i++) {
+            for (int i = 0; i < length; i++) {
                 values[i] = Array.get(value, i);
             }
         }
 
         // special handling for binaries: we dump the length and not the data!
-        if (value instanceof InputStream
-                || (values != null && values[0] instanceof InputStream)) {
+        if (value instanceof InputStream || (values != null && values[0] instanceof InputStream)) {
             // TODO for now we mark binary properties with an initial colon in
             // their name
             // (colon is not allowed as a JCR property name)
             // in the name, and the value should be the size of the binary data
             if (values == null) {
-                jgen.writeNumberField(":" + key, getLength(valueMap, -1, key, (InputStream)value));
+                jgen.writeNumberField(":" + key, getLength(valueMap, -1, key, (InputStream) value));
             } else {
                 jgen.writeArrayFieldStart(":" + key);
                 for (int i = 0; i < values.length; i++) {
-                    jgen.writeNumber(getLength(valueMap, i, key, (InputStream)values[i]));
+                    jgen.writeNumber(getLength(valueMap, i, key, (InputStream) values[i]));
                 }
                 jgen.writeEndArray();
             }
@@ -166,15 +174,16 @@ public class ResourceSerializer extends JsonSerializer<Resource> implements Reso
     private long getLength(final ValueMap valueMap, final int index, final String key, final InputStream stream) {
         try {
             stream.close();
-        } catch (IOException ignore) {}
+        } catch (IOException ignore) {
+        }
 
         long length = -1;
-        if ( valueMap != null ) {
-            if ( index == -1 ) {
+        if (valueMap != null) {
+            if (index == -1) {
                 length = valueMap.get(key, length);
             } else {
                 Long[] lengths = valueMap.get(key, Long[].class);
-                if ( lengths != null && lengths.length > index ) {
+                if (lengths != null && lengths.length > index) {
                     length = lengths[index];
                 }
             }
@@ -183,20 +192,21 @@ public class ResourceSerializer extends JsonSerializer<Resource> implements Reso
     }
 
     /** Dump only a value in the correct format */
-    private void writeValue(final JsonGenerator jgen, final Object value, final SerializerProvider provider) throws IOException {
+    private void writeValue(final JsonGenerator jgen, final Object value, final SerializerProvider provider)
+            throws IOException {
         if (value instanceof InputStream) {
             // input stream is already handled
             jgen.writeNumber(0);
         } else if (value instanceof Calendar) {
             calendarSerializer.serialize(value, jgen, provider);
         } else if (value instanceof Boolean) {
-            jgen.writeBoolean(((Boolean)value).booleanValue());
+            jgen.writeBoolean(((Boolean) value).booleanValue());
         } else if (value instanceof Long) {
-            jgen.writeNumber(((Long)value).longValue());
+            jgen.writeNumber(((Long) value).longValue());
         } else if (value instanceof Integer) {
-            jgen.writeNumber(((Integer)value).intValue());
+            jgen.writeNumber(((Integer) value).intValue());
         } else if (value instanceof Double) {
-            jgen.writeNumber(((Double)value).doubleValue());
+            jgen.writeNumber(((Double) value).doubleValue());
         } else if (value != null) {
             jgen.writeString(value.toString());
         } else {

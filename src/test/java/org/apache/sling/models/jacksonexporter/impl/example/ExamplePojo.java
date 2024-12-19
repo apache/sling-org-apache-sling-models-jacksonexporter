@@ -50,5 +50,4 @@ public class ExamplePojo {
         this.booleanProp = value;
         return this;
     }
-
 }

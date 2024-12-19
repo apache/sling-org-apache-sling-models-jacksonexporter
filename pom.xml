@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements. See the NOTICE file
@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.apache.sling</groupId>
         <artifactId>sling-bundle-parent</artifactId>
-        <version>52</version>
+        <version>60</version>
         <relativePath />
     </parent>
 
@@ -34,15 +34,27 @@
     <scm>
         <connection>scm:git:https://gitbox.apache.org/repos/asf/sling-org-apache-sling-models-jacksonexporter.git</connection>
         <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/sling-org-apache-sling-models-jacksonexporter.git</developerConnection>
+        <tag>HEAD</tag>
         <url>https://github.com/apache/sling-org-apache-sling-models-jacksonexporter.git</url>
-      <tag>HEAD</tag>
-  </scm>
+    </scm>
 
     <properties>
         <sling.java.version>8</sling.java.version>
         <project.build.outputTimestamp>2023-07-13T09:44:49Z</project.build.outputTimestamp>
         <version.jackson>2.13.5</version.jackson>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>5.10.1</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
@@ -158,24 +170,12 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-           <groupId>ch.qos.logback</groupId>
-           <artifactId>logback-classic</artifactId>
-           <version>1.2.13</version>
-           <scope>test</scope>
-       </dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.2.13</version>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
-
-    <dependencyManagement>
-      <dependencies>
-        <dependency>
-          <groupId>org.junit</groupId>
-          <artifactId>junit-bom</artifactId>
-          <version>5.10.1</version>
-          <type>pom</type>
-          <scope>import</scope>
-        </dependency>
-      </dependencies>
-    </dependencyManagement>
 
 </project>
