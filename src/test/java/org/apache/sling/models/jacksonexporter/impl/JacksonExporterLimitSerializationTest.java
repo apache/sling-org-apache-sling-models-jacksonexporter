@@ -37,6 +37,8 @@ import org.apache.sling.models.jacksonexporter.impl.example.PojoWithResourceReso
 import org.apache.sling.models.jacksonexporter.impl.util.LogCapture;
 import org.apache.sling.testing.mock.osgi.junit5.OsgiContext;
 import org.apache.sling.testing.mock.osgi.junit5.OsgiContextExtension;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -255,6 +257,38 @@ class JacksonExporterLimitSerializationTest {
         @Override
         public void refresh() {
             // do nothing
+        }
+
+        @Override
+        public @Nullable Resource getParent(@NotNull Resource child) {
+            return null;
+        }
+
+        @Override
+        public boolean hasChildren(@NotNull Resource resource) {
+            return false;
+        }
+
+        @Override
+        public boolean orderBefore(
+                @NotNull Resource parent, @NotNull String name, @Nullable String followingSiblingName)
+                throws UnsupportedOperationException, PersistenceException, IllegalArgumentException {
+            return false;
+        }
+
+        @Override
+        public Resource copy(String srcAbsPath, String destAbsPath) throws PersistenceException {
+            return null;
+        }
+
+        @Override
+        public Resource move(String srcAbsPath, String destAbsPath) throws PersistenceException {
+            return null;
+        }
+
+        @Override
+        public @NotNull Map<String, Object> getPropertyMap() {
+            return Map.of();
         }
     }
 }
