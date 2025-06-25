@@ -290,5 +290,15 @@ class JacksonExporterLimitSerializationTest {
         public @NotNull Map<String, Object> getPropertyMap() {
             return Map.of();
         }
+
+        @Override
+        public @NotNull String map(jakarta.servlet.http.HttpServletRequest request, @NotNull String resourcePath) {
+            return null;
+        }
+
+        @Override
+        public @NotNull Resource resolve(jakarta.servlet.http.HttpServletRequest request, @NotNull String absPath) {
+            return null;
+        }
     }
 }
