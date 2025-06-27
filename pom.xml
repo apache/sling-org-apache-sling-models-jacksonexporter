@@ -41,7 +41,7 @@
     <properties>
         <sling.java.version>11</sling.java.version>
         <project.build.outputTimestamp>2025-06-25T07:05:44Z</project.build.outputTimestamp>
-        <version.jackson>2.13.5</version.jackson>
+        <version.jackson>2.15.0</version.jackson>
     </properties>
 
     <dependencies>
