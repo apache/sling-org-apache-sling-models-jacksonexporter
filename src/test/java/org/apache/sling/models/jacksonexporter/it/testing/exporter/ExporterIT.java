@@ -31,7 +31,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.sling.api.SlingConstants;
 import org.apache.sling.api.resource.Resource;
@@ -159,7 +159,7 @@ public class ExporterIT {
             String jsonData = modelFactory.exportModelForResource(
                     baseComponentResource, "jackson", String.class, Collections.<String, String>emptyMap());
             Assert.assertTrue(
-                    "JSON Data should contain the property value", StringUtils.contains(jsonData, "baseTESTValue"));
+                    "JSON Data should contain the property value", Strings.CS.contains(jsonData, "baseTESTValue"));
 
             JsonObject parsed = Json.createReader(new StringReader(jsonData)).readObject();
             JsonObject resource = parsed.getJsonObject("resource");
@@ -177,15 +177,14 @@ public class ExporterIT {
             jsonData = modelFactory.exportModelForResource(
                     extendedComponentResource, "jackson", String.class, Collections.<String, String>emptyMap());
             Assert.assertTrue(
-                    "JSON Data should contain the property value", StringUtils.contains(jsonData, "extendedTESTValue"));
+                    "JSON Data should contain the property value", Strings.CS.contains(jsonData, "extendedTESTValue"));
 
             final Resource interfaceComponentResource = resolver.getResource(interfaceComponentPath);
             Assert.assertNotNull(baseComponentResource);
             jsonData = modelFactory.exportModelForResource(
                     interfaceComponentResource, "jackson", String.class, Collections.<String, String>emptyMap());
             Assert.assertTrue(
-                    "JSON Data should contain the property value",
-                    StringUtils.contains(jsonData, "interfaceTESTValue"));
+                    "JSON Data should contain the property value", Strings.CS.contains(jsonData, "interfaceTESTValue"));
         }
     }
 
