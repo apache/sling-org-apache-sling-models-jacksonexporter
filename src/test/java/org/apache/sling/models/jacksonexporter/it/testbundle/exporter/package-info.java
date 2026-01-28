@@ -16,6 +16,6 @@
  */
 
 @Version("1.0")
-package org.apache.sling.models.it.testbundle.exporter;
+package org.apache.sling.models.jacksonexporter.it.testbundle.exporter;
 
 import org.osgi.annotation.versioning.Version;

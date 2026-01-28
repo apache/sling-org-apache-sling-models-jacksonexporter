@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.sling.models.it.testbundle.exporter;
+package org.apache.sling.models.jacksonexporter.it.testbundle.exporter;
 
 import javax.inject.Inject;
 import javax.servlet.ServletRequest;

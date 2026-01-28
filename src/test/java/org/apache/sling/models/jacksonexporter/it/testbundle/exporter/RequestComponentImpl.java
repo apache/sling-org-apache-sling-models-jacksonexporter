@@ -16,28 +16,37 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.sling.models.it.testbundle.exporter;
+package org.apache.sling.models.jacksonexporter.it.testbundle.exporter;
 
 import javax.inject.Inject;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.annotations.Exporter;
 import org.apache.sling.models.annotations.Model;
+import org.apache.sling.models.annotations.Via;
+import org.apache.sling.models.annotations.injectorspecific.SlingObject;
 
 @Model(
-        adaptables = {Resource.class},
-        resourceType = "sling/exp/base")
+        adaptables = {SlingHttpServletRequest.class},
+        adapters = Component.class,
+        resourceType = "sling/exp-request/interface")
 @Exporter(name = "jackson", extensions = "json")
-public class BaseComponent {
-
-    private final Resource resource;
+public class RequestComponentImpl implements Component {
 
     @Inject
+    @SlingObject
+    private Resource resource;
+
+    @Inject
+    @Via("resource")
     private String sampleValue;
 
-    public BaseComponent(Resource resource) {
-        this.resource = resource;
+    @SuppressWarnings("unused")
+    private final SlingHttpServletRequest request;
+
+    public RequestComponentImpl(SlingHttpServletRequest request) {
+        this.request = request;
     }
 
     public String getId() {
@@ -46,14 +55,5 @@ public class BaseComponent {
 
     public String getSampleValue() {
         return sampleValue;
-    }
-
-    @JsonProperty(value = "UPPER")
-    public String getSampleValueToUpperCase() {
-        return sampleValue.toUpperCase();
-    }
-
-    public Resource getResource() {
-        return resource;
     }
 }

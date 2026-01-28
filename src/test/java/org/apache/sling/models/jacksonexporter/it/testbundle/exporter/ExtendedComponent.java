@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.sling.models.it.testbundle.exporter;
+package org.apache.sling.models.jacksonexporter.it.testbundle.exporter;
 
 import javax.inject.Inject;
 
@@ -24,27 +24,21 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.annotations.Exporter;
-import org.apache.sling.models.annotations.ExporterOption;
 import org.apache.sling.models.annotations.Model;
-import org.apache.sling.models.annotations.Via;
 
 @Model(
-        adaptables = {SlingHttpServletRequest.class},
-        resourceType = "sling/exp-request/extended")
-@Exporter(
-        name = "jackson",
-        extensions = "json",
-        options = {@ExporterOption(name = "SerializationFeature.WRITE_DATES_AS_TIMESTAMPS", value = "false")})
-public class ExtendedRequestComponent extends BaseRequestComponent {
+        adaptables = {Resource.class},
+        resourceType = "sling/exp/extended")
+@Exporter(name = "jackson", extensions = "json")
+public class ExtendedComponent extends BaseComponent {
 
     @Inject
-    @Via("resource")
     private Date date;
 
-    public ExtendedRequestComponent(SlingHttpServletRequest request) {
-        super(request);
+    public ExtendedComponent(Resource resource) {
+        super(resource);
     }
 
     public Calendar getDateByCalendar() {

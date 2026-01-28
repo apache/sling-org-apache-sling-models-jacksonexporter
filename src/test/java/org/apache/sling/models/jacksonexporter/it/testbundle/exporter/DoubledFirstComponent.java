@@ -16,44 +16,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.sling.models.it.testbundle.exporter;
+package org.apache.sling.models.jacksonexporter.it.testbundle.exporter;
 
-import javax.inject.Inject;
-
-import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.annotations.Exporter;
 import org.apache.sling.models.annotations.Model;
-import org.apache.sling.models.annotations.Via;
-import org.apache.sling.models.annotations.injectorspecific.SlingObject;
 
 @Model(
-        adaptables = {SlingHttpServletRequest.class},
-        adapters = Component.class,
-        resourceType = "sling/exp-request/interface")
-@Exporter(name = "jackson", extensions = "json")
-public class RequestComponentImpl implements Component {
+        adaptables = {Resource.class},
+        resourceType = "sling/exp/doubled")
+@Exporter(name = "jackson", extensions = "json", selector = "firstmodel")
+public class DoubledFirstComponent {
 
-    @Inject
-    @SlingObject
-    private Resource resource;
-
-    @Inject
-    @Via("resource")
-    private String sampleValue;
-
-    @SuppressWarnings("unused")
-    private final SlingHttpServletRequest request;
-
-    public RequestComponentImpl(SlingHttpServletRequest request) {
-        this.request = request;
-    }
-
-    public String getId() {
-        return this.resource.getPath();
-    }
-
-    public String getSampleValue() {
-        return sampleValue;
+    public String getValue() {
+        return "first";
     }
 }

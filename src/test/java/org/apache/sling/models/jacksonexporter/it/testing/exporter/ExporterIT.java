@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.sling.models.it.testing.exporter;
+package org.apache.sling.models.jacksonexporter.it.testing.exporter;
 
 import javax.json.Json;
 import javax.json.JsonObject;

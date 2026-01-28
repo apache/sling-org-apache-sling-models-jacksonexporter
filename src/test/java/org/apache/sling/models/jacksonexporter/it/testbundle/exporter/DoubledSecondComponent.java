@@ -16,9 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.sling.models.it.testbundle.exporter;
-
-import javax.inject.Inject;
+package org.apache.sling.models.jacksonexporter.it.testbundle.exporter;
 
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.annotations.Exporter;
@@ -26,25 +24,11 @@ import org.apache.sling.models.annotations.Model;
 
 @Model(
         adaptables = {Resource.class},
-        adapters = Component.class,
-        resourceType = "sling/exp/interface")
-@Exporter(name = "jackson", extensions = "json")
-public class ComponentImpl implements Component {
+        resourceType = "sling/exp/doubled")
+@Exporter(name = "jackson", extensions = "json", selector = "secondmodel")
+public class DoubledSecondComponent {
 
-    private final Resource resource;
-
-    @Inject
-    private String sampleValue;
-
-    public ComponentImpl(Resource resource) {
-        this.resource = resource;
-    }
-
-    public String getId() {
-        return this.resource.getPath();
-    }
-
-    public String getSampleValue() {
-        return sampleValue;
+    public String getValue() {
+        return "second";
     }
 }

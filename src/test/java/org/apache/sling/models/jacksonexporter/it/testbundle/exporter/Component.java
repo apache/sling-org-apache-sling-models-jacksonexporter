@@ -16,19 +16,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.sling.models.it.testbundle.exporter;
+package org.apache.sling.models.jacksonexporter.it.testbundle.exporter;
 
-import org.apache.sling.api.resource.Resource;
-import org.apache.sling.models.annotations.Exporter;
-import org.apache.sling.models.annotations.Model;
+public interface Component {
 
-@Model(
-        adaptables = {Resource.class},
-        resourceType = "sling/exp/doubled")
-@Exporter(name = "jackson", extensions = "json", selector = "secondmodel")
-public class DoubledSecondComponent {
+    String getId();
 
-    public String getValue() {
-        return "second";
-    }
+    String getSampleValue();
 }
