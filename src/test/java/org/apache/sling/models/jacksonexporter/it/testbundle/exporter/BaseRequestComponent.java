@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
@@ -87,14 +88,17 @@ public class BaseRequestComponent {
         return testBindingsObject2;
     }
 
+    @JsonIgnore
     public SlingHttpServletRequest getSlingHttpServletRequest() {
         return request;
     }
 
+    @JsonIgnore
     public HttpServletRequest getHttpServletRequest() {
         return request;
     }
 
+    @JsonIgnore
     public ServletRequest getServletRequest() {
         return request;
     }
