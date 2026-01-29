@@ -18,9 +18,6 @@
  */
 package org.apache.sling.models.jacksonexporter.it.testing.exporter;
 
-import javax.json.Json;
-import javax.json.JsonObject;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.StringReader;
@@ -31,6 +28,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
 
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
 import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.sling.api.SlingConstants;
@@ -264,7 +263,8 @@ public class ExporterIT {
                     new FakeRequest(baseRequestComponentPath + ".model.json"), response, resolver);
             String stringOutput = response.getStringWriter().toString();
 
-            Assert.assertTrue(stringOutput.startsWith("{\"UPPER\":"));
+            Assert.assertTrue(
+                    "String does not start with {\"UPPER\":" + stringOutput, stringOutput.startsWith("{\"UPPER\":"));
 
             JsonObject obj = Json.createReader(new StringReader(stringOutput)).readObject();
             Assert.assertEquals("application/json", response.getContentType());

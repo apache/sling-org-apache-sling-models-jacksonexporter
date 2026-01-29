@@ -46,7 +46,7 @@ public class SM_TeleporterCustomizer implements TeleporterRule.Customizer {
         cst.setBaseUrl(S.getServerBaseUrl());
         cst.setServerCredentials(S.getServerUsername(), S.getServerPassword());
         cst.setTestReadyTimeoutSeconds(TimeoutsProvider.getInstance().getTimeout(5));
-        cst.includeDependencyPrefix("org.apache.sling.models.jacksonexporter.it.testbundle.it.testing");
+        cst.includeDependencyPrefix("org.apache.sling.models.it.testing");
 
         // additionally check for the registration of mandatory sling models components
         try (OsgiConsoleClient osgiClient =
