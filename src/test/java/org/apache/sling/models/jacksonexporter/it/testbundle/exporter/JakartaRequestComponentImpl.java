@@ -30,7 +30,7 @@ import org.apache.sling.models.annotations.injectorspecific.SlingObject;
 @Model(
         adaptables = {SlingJakartaHttpServletRequest.class},
         adapters = Component.class,
-        resourceType = "sling/exp-request/interface")
+        resourceType = "sling/exp-request/interfaceJakarta")
 @Exporter(name = "jackson", extensions = "json")
 public class JakartaRequestComponentImpl implements Component {
 

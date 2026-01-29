@@ -24,6 +24,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.models.annotations.Exporter;
 import org.apache.sling.models.annotations.ExporterOption;
@@ -47,12 +48,14 @@ public class ExtendedRequestComponent extends BaseRequestComponent {
         super(request);
     }
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ", timezone = "UTC")
     public Calendar getDateByCalendar() {
         Calendar cal = new GregorianCalendar();
         cal.setTime(date);
         return cal;
     }
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ", timezone = "UTC")
     public Date getDate() {
         return date;
     }
