@@ -1,6 +1,10 @@
 {
     "bundles": [
         {
+            "id": "org.apache.sling/org.apache.sling.engine/${engine.version}",
+            "start-order": 20
+        },
+        {
             "id": "org.apache.sling/org.apache.sling.models.api/${models.api.version}",
             "start-order": 20
         },
