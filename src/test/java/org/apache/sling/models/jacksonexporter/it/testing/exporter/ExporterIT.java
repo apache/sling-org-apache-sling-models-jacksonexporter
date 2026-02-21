@@ -46,7 +46,6 @@ import org.apache.sling.models.it.testing.helper.JakartaFakeRequest;
 import org.apache.sling.models.it.testing.helper.JakartaFakeResponse;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -258,7 +257,6 @@ public class ExporterIT {
     }
 
     @Test
-    @Ignore("TODO: enable when problem with Jakarta Servlet API -> Javax Servlet API is solved")
     public void testRequestServlets() throws Exception {
         try (ResourceResolver resolver = rrFactory.getServiceResourceResolver(null); ) {
             FakeResponse response = new FakeResponse();
