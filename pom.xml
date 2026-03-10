@@ -45,7 +45,7 @@
         <models.impl.version>2.0.2</models.impl.version>
         <version.jackson>2.18.6</version.jackson>
         <!-- integration tests -->
-        <sling.starter.version>14-SNAPSHOT</sling.starter.version>
+        <sling.starter.version>14</sling.starter.version>
         <starter.min.bundles.count>200</starter.min.bundles.count>
         <it.startTimeoutSeconds>60</it.startTimeoutSeconds>
         <it.models.log.level>debug</it.models.log.level>
